@@ -2,4 +2,6 @@
 bin/*
 .vscode/
 /data/*.gdf
-script/
+/data/json/*.json
+/script/*.p
+/script/data/*.plt
