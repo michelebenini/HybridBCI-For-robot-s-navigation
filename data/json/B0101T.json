@@ -1,0 +1,1764 @@
+
+{
+	"TYPE"	: "GDF",
+	"VERSION"	: 1.99,
+	"Filename"	: "../data/B0101T.gdf",
+	"NumberOfChannels"	: 6,
+	"NumberOfRecords"	: 604803,
+	"SamplesPerRecords"	: 1,
+	"NumberOfSamples"	: 604803,
+	"Samplingrate"	: 250.000000,
+	"StartOfRecording"	: "2005-10-25 09:35:11",
+	"TimezoneMinutesEastOfUTC"	: 0,
+	"NumberOfSweeps"	: 8,
+	"NumberOfGroupsOrUserSpecifiedEvents"	: 0,
+	"Patient"	: {
+		"Id"	: "B01",
+		"Age"	: 20,
+		"Gender"	: "Female"
+	},
+	"CHANNEL"	: [
+		{
+		"ChannelNumber"	: 1,
+		"Label"	: "EEG:C3          ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 99.9985,
+		"PhysicalMinimum"	: -99.9985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.0030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		},
+		{
+		"ChannelNumber"	: 2,
+		"Label"	: "EEG:Cz          ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 99.9985,
+		"PhysicalMinimum"	: -99.9985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.0030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		},
+		{
+		"ChannelNumber"	: 3,
+		"Label"	: "EEG:C4          ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 99.9985,
+		"PhysicalMinimum"	: -99.9985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.0030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		},
+		{
+		"ChannelNumber"	: 4,
+		"Label"	: "EOG:ch01        ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 999.985,
+		"PhysicalMinimum"	: -999.985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		},
+		{
+		"ChannelNumber"	: 5,
+		"Label"	: "EOG:ch02        ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 999.985,
+		"PhysicalMinimum"	: -999.985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		},
+		{
+		"ChannelNumber"	: 6,
+		"Label"	: "EOG:ch03        ",
+		"Transducer"	: "                                                                                ",
+		"PhysicalUnit"	: "uV",
+		"PhysicalMaximum"	: 999.985,
+		"PhysicalMinimum"	: -999.985,
+		"DigitalMaximum"	: 32767.000000,
+		"DigitalMinimum"	: -32767.000000,
+		"scaling"	: 0.030518,
+		"offset"	: 0,
+		"Filter" : {
+			"Lowpass"	: 0.5,
+			"Highpass"	: 100 
+
+		},
+		"Impedance"	: 2.14748e+09,
+		"Samplingrate"	: 250.000000
+		}
+	],
+	"EVENT"	: [
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 0.000000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0114",
+		"POS"	: 1.996000,
+		"DUR"	: 60.000000,
+		"Description"	: "eeg:Idling EEG - eyes open"
+		},
+		{
+		"TYP"	: "0x0115",
+		"POS"	: 66.996000,
+		"DUR"	: 60.000000,
+		"Description"	: "eeg:Idling EEG - eyes closed"
+		},
+		{
+		"TYP"	: "0x0439",
+		"POS"	: 131.996000,
+		"DUR"	: 15.000000,
+		"Description"	: "eye blinks"
+		},
+		{
+		"TYP"	: "0x0437",
+		"POS"	: 151.996000,
+		"DUR"	: 15.000000,
+		"Description"	: "eye rotation (clockwise)"
+		},
+		{
+		"TYP"	: "0x0436",
+		"POS"	: 171.996000,
+		"DUR"	: 15.000000,
+		"Description"	: "vertical eye movement"
+		},
+		{
+		"TYP"	: "0x0435",
+		"POS"	: 191.996000,
+		"DUR"	: 15.000000,
+		"Description"	: "horizontal eye movement"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 209.004000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 220.556000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 223.556000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 229.996000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 232.996000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 248.268000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 251.268000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 256.416000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 259.416000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 291.924000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 294.924000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 300.752000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 303.752000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 310.356000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 313.356000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 354.000000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 354.000000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 357.000000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 363.736000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 366.736000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 372.772000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 375.772000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 399.812000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 402.812000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 428.424000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 431.424000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 438.268000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 441.268000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 448.112000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 451.112000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 465.564000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 465.564000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 468.564000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 484.644000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 487.644000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 494.444000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 497.444000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 530.584000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 533.584000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 557.724000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 557.724000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 560.724000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 565.908000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 568.908000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 577.372000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 579.764000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 582.764000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 588.924000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 591.924000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 598.364000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 601.364000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 624.784000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 627.784000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 642.364000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 645.364000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 660.292000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 663.292000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 678.724000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 681.724000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 687.960000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 687.960000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 690.960000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 704.992000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 707.992000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 713.220000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 716.220000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 732.104000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 735.104000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 741.140000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 744.140000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 768.180000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 771.180000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 796.792000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 796.792000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 799.792000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 843.660000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 846.660000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 862.812000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 865.812000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 881.068000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 884.068000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 889.828000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 892.828000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 908.772000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 911.772000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 918.036000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 921.036000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 945.740000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 966.732000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 969.732000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 976.020000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 979.020000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1002.312000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1005.312000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1010.732000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1013.732000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1028.660000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1031.660000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1037.488000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1040.488000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1056.328000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1059.328000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1064.536000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1067.536000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1073.360000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1076.360000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1127.080000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1130.080000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1136.548000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1139.548000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1146.304000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1149.304000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1155.952000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1158.952000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1184.848000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1187.848000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1193.036000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1193.036000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1196.036000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1240.620000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1243.620000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1258.196000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1261.196000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1267.320000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1270.320000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1277.140000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1280.140000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1302.644000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1302.644000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1305.644000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 1314.108000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1325.660000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1325.660000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1328.660000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1353.372000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1353.372000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1356.372000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1370.680000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1373.680000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1387.208000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1390.208000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1415.460000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1418.460000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1424.696000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1427.696000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1432.904000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1435.904000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1441.728000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1444.728000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1449.956000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1452.956000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1477.876000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1477.876000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1480.876000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1487.012000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1490.012000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1495.448000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1495.448000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1498.448000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1504.916000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1507.916000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1514.672000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1517.672000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1553.216000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1556.216000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1589.748000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1592.748000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1608.988000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1611.988000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1645.508000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1648.508000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1654.772000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1657.772000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1671.012000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1671.012000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1674.012000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 1682.476000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1694.028000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1697.028000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1712.756000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1715.756000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1721.740000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1724.740000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1739.048000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1742.048000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1747.468000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1747.468000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1750.468000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1765.396000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1768.396000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1783.828000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1786.828000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1793.064000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1796.064000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1837.208000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1840.208000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1855.380000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1858.380000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1873.284000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1876.284000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1911.740000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 1911.740000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1914.740000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1921.584000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1924.584000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1929.772000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1932.772000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1939.036000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1942.036000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1958.116000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 1961.116000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 1967.916000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 1970.916000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2004.056000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2007.056000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2013.876000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2016.876000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2039.380000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 2039.380000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2042.380000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x7ffe",
+		"POS"	: 2050.844000,
+		"DUR"	: 0.000000,
+		"Description"	: "start of a new segment (after a break)"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2071.836000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 2071.836000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2074.836000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2107.416000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2110.416000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2115.836000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 2115.836000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2118.836000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2123.944000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2126.944000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2133.764000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2136.764000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2161.432000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2164.432000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2205.576000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2208.576000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2214.612000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2217.612000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2232.184000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x03ff",
+		"POS"	: 2232.184000,
+		"DUR"	: 8.000000,
+		"Description"	: "Rejection of whole trial"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2235.184000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2241.652000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2244.652000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2270.264000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2273.264000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2289.952000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2292.952000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2298.140000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2301.140000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2317.132000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2320.132000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2326.484000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2329.484000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2336.284000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2339.284000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2354.540000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2357.540000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2363.300000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0301",
+		"POS"	: 2366.300000,
+		"DUR"	: 1.252000,
+		"Description"	: "class1, Left hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2372.424000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2375.424000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		},
+		{
+		"TYP"	: "0x0300",
+		"POS"	: 2407.748000,
+		"DUR"	: 8.000000,
+		"Description"	: "Start of Trial, Trigger at t=0s"
+		},
+		{
+		"TYP"	: "0x0302",
+		"POS"	: 2410.748000,
+		"DUR"	: 1.252000,
+		"Description"	: "class2, Right hand"
+		}
+	]
+}
