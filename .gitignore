@@ -1,7 +1,4 @@
 # Don't track content of these folders
-/bin/*
-.vscode/
-/data/*.gdf
-/data/json/*.json
-/script/*.p
-/script/data/*.plt
+/BCIcmdSim/bin/*
+/BCIcmdSim/.vscode/
+
