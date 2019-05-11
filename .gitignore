@@ -1,4 +1,4 @@
 # Don't track content of these folders
-/BCIcmdSim/bin/*
+/BCIcmdSim/bin/*.o
 /BCIcmdSim/.vscode/
 
