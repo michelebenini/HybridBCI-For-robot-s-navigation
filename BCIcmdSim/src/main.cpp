@@ -40,9 +40,22 @@ struct command                                            // struct represent th
   int mi[MAX_MOVES];
 };
 
+struct trajectory
+{
+  cv::Point pos[MAX_MOVES];
+  int dists;
+  int middle;
+  int dev;
+  cv::Point start;
+  cv::Point current;
+  cv::Point end;
+};
+
+
 void _init_map(struct map *m);                            //  inizialize map
 void _init_bot(struct bot *bt);                           //  inizialize bot
 void _init_command(struct command *cmd);                  //  inizialize command
+void _init_trajectory(struct trajectory *trj);            // inizialize trajectory
 void show(struct map m, struct bot bt,struct command cmd);//  show map
 void show_command(int i, struct command cmd);             //  show command
 void move_bot(struct bot *bt, cv::Point shift);           //  move bot of shift
@@ -53,10 +66,12 @@ int main() {
   map m;
   bot bt;
   command cmd;
+  trajectory trj;
 
   _init_map(&m);
   _init_bot(&bt);
   _init_command(&cmd);
+  _init_trajectory(&trj);
   
   // synchronizes the structs
   m.goal = cmd.pos[cmd.current_goal];
@@ -172,6 +187,16 @@ void _init_command(struct command *cmd){
   }
 }
 
+void _init_trajectory(struct trajectory *trj){
+  trj->start = cv::Point(0,0);
+  trj->current = cv::Point(0,0);
+  trj->end = cv::Point(0,0);
+  trj->dists = 0;
+  trj->middle = 0;
+  trj->dev = 0;
+  for(int i = 0; i < MAX_MOVES; i++)trj->pos[i] = cv::Point(0,0);
+}
+
 void show(struct map m, struct bot bt,struct command cmd){
   cv::String window_name = "Map";
   cv::Mat img(m.rows,m.cols, CV_8UC3, cv::Scalar(255,255,255));
@@ -279,3 +304,8 @@ cv::Point perpendicular(cv::Point vec){
     }
     return shift;
 }
+
+/*
+  - Il goal dato dalla è certo?
+  - Mi devono spostare il goal o cambiano solo la traiettoria?
+*/
