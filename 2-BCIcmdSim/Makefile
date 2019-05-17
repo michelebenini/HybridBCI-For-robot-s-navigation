@@ -5,9 +5,6 @@ all: $(EXE)
 setting = -1   
 OS := $(shell uname)
 
-
-
-
 setting = 1
 CC = g++ -std=c++11 
 AR = ar rc

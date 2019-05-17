@@ -23,7 +23,7 @@ double tot_distribution(double *in);
 int calculate_degree(cv::Point bt, cv::Point elem);
 double dist(cv::Point p1, cv::Point p2);
 int calc_direction(double *in);
-cv::Point calculate_point(cv::Point bt, int degree, double dist);
+cv::Point calculate_point(cv::Point bt, int dg, double dist);
 
 int main() {
   player pls[MAX_P300];
@@ -132,7 +132,7 @@ void _init_bot(struct bot *bt){
   bt->radius = 5;
   bt->radius_area = 60;
   bt->radius_dist = 120;
-  bt->color =  cv::Scalar(125,125,125);
+  bt->color =  cv::Scalar(0,0,0);
   _init_distribution(&bt->dir,(double)MAX_DIRECTION/2, 90.0 );
   bt->current_direction = MAX_DIRECTION/2;
   bt->target_direction = MAX_DIRECTION/2;
@@ -169,8 +169,8 @@ void show_map( struct bot bt, struct player pls[MAX_P300]){
   cv::fillPoly(img,ppt, npt,1,cv::Scalar(200,200,200),CV_AA, 0,cv::Point());
 
   cv::circle(img, bt.current_pos, bt.radius, bt.color, -1, CV_AA);
-  cv::circle(img, bt.current_pos, bt.radius_area, bt.color, 2, CV_AA);
-  cv::circle(img, bt.current_pos, bt.radius_dist, bt.color, 2, CV_AA);
+  cv::circle(img, bt.current_pos, bt.radius_area, bt.color, -1, CV_AA);
+  cv::circle(img, bt.current_pos, bt.radius_dist, bt.color, 1, CV_AA);
   
   cv::Vec3b color;color[0] = 0;color[1] = 0;color[2] = 0;
   
@@ -234,7 +234,7 @@ void show_distribution(struct distribution dis){
   cv::imshow(window_name,img);
 }
 
-void p300_set(struct player pls[MAX_P300], int n){
+void p300_set(struct player pls[MAX_P300], int n){                                // set p300 probability 
   for(int i = 0; i < MAX_P300; i++){
     if( i == n ){
       pls[i].p = pls[i].p + pls[i].cost * ((double)(MAX_P300-1));
@@ -249,7 +249,7 @@ void p300_set(struct player pls[MAX_P300], int n){
   }
 }
 
-void p300_set_fixed(struct player pls[MAX_P300], int n){
+void p300_set_fixed(struct player pls[MAX_P300], int n){                          // set p300 probability in a prefixed way
   for(int i = 0; i < MAX_P300; i++){
     if( i == n ){
       pls[i].p = FIXED_P300;
@@ -261,7 +261,7 @@ void p300_set_fixed(struct player pls[MAX_P300], int n){
   }
 }
 
-void p300_check(struct player pls[MAX_P300], struct bot bt){
+void p300_check(struct player pls[MAX_P300], struct bot bt){                       // FOV-based control of p300 probability 
   for(int i = 0; i < MAX_P300; i++){
     int dg_p = calculate_degree(bt.current_pos, pls[i].pos)-MAX_DIRECTION/2;
     if(dg_p > MAX_DIRECTION)dg_p = dg_p%MAX_DIRECTION;
@@ -284,54 +284,61 @@ void p300_check(struct player pls[MAX_P300], struct bot bt){
   }
 }
 
-void motor_imagery_right(struct bot *bt){
+void motor_imagery_right(struct bot *bt){                                          // send motor imagery right command
   std::cout << "Right command!" << std::endl;
+
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
+  mul_distribution(mi.dir, NEW_MI_EFFECT);
+  int shift = (bt->current_direction-(MAX_DIRECTION/4));
+  shift_distribution(mi.dir, shift);
   
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, STAY_STDDEV);
+  mul_distribution(k_dist.dir, NEW_STAY_EFFECT);
   
-  int shift = (bt->current_direction-(MAX_DIRECTION/4));
-  
-  shift_distribution(mi.dir, shift);
+  mul_distribution(bt->dir.dir, PAST_EFFECT);
   sum_distribution(bt->dir.dir, mi.dir);
 
-  shift_distribution( k_dist.dir, bt->current_direction);
+  shift_distribution( k_dist.dir, (bt->current_direction-MAX_DIRECTION/2));
   sum_distribution(bt->dir.dir, k_dist.dir);
   
   double tot = tot_distribution(bt->dir.dir);
   mul_distribution(bt->dir.dir, 1/tot);
 }
 
-void motor_imagery_left(struct bot *bt){
+void motor_imagery_left(struct bot *bt){                                          // send motor imagery left command
   std::cout << "Left command!" << std::endl;
   
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
+  mul_distribution(mi.dir, NEW_MI_EFFECT);
+  int shift = (bt->current_direction+(MAX_DIRECTION/4));
+  shift_distribution(mi.dir, shift);
   
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, STAY_STDDEV);
+  mul_distribution(k_dist.dir, NEW_STAY_EFFECT);
   
-  int shift = (bt->current_direction+(MAX_DIRECTION/4));
-  shift_distribution(mi.dir, shift);
+  mul_distribution(bt->dir.dir, PAST_EFFECT);
   sum_distribution(bt->dir.dir, mi.dir);
 
-  shift_distribution( k_dist.dir, bt->current_direction);
+  shift_distribution( k_dist.dir, (bt->current_direction-MAX_DIRECTION/2));
   sum_distribution(bt->dir.dir, k_dist.dir);
   
   double tot = tot_distribution(bt->dir.dir);
   mul_distribution(bt->dir.dir, 1/tot);
 }
 
-void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){
+void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){           // send the p300 command
   std::cout << "P300 command!" << std::endl;
   for(int i = 0; i < MAX_P300; i++){
     distribution k_dist;
-    _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV);
-    mul_distribution(k_dist.dir, pls[i].p);
+    _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV); // possibility to add a coefficient whitch depends of the players distance 
+    mul_distribution(k_dist.dir, pls[i].p*NEW_P300_EFFECT);
     int shift = calculate_degree(bt.current_pos, pls[i].pos);
     shift_distribution(k_dist.dir, shift);
+    mul_distribution(dis->dir, PAST_EFFECT);
     sum_distribution(dis->dir, k_dist.dir);
   }
   double tot = tot_distribution(dis->dir);
@@ -374,7 +381,7 @@ double tot_distribution(double *in){
   return res;
 }
 
-int calculate_degree(cv::Point bt, cv::Point elem){
+int calculate_degree(cv::Point bt, cv::Point elem){                               // calculate degree beetwen two points
   double d = dist(bt, elem);
   cv::Point pt0(0,d);
   elem = elem - bt;
@@ -392,11 +399,11 @@ int calculate_degree(cv::Point bt, cv::Point elem){
   return result;
 }
 
-double dist(cv::Point p1, cv::Point p2){
+double dist(cv::Point p1, cv::Point p2){                                          // calculate the Euclidean distance beetwen two points
   return sqrt((p1.x - p2.x)*(p1.x - p2.x)+(p1.y - p2.y)*(p1.y - p2.y)) ;
 }
 
-int calc_direction(double *in){
+int calc_direction(double *in){                                                   // calculate the target direction basing on distribution
   double acc[MAX_DIRECTION];
   for(int i = 0; i < MAX_DIRECTION; i++){
     acc[i] = 0;
@@ -420,10 +427,11 @@ int calc_direction(double *in){
   return max_pos;
 }
 
-cv::Point calculate_point(cv::Point bt, int degree, double dist){
+
+cv::Point calculate_point(cv::Point bt, int dg, double dist){                     // calculare the point at distance dist and degree dg from bt
   cv::Point pt;
 
-  double angle = (double)degree*M_PI/180;
+  double angle = (double)dg*M_PI/180;
   double s = dist*sin(angle);
   double c = dist*cos(angle);
 
