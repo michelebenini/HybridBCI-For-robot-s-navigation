@@ -18,6 +18,8 @@ When the code is executing press:
 [ a ] send motor imagery left command 
 [ m ] switch p300 setter mode
 [ p ] robot moves 
+[ r ] restar the simulation
+[ q ] quit the simulation
 [ h ] help 
 ```
 # Elements of the code

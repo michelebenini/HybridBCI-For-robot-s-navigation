@@ -24,6 +24,9 @@ int calculate_degree(cv::Point bt, cv::Point elem);
 double dist(cv::Point p1, cv::Point p2);
 int calc_direction(double *in);
 cv::Point calculate_point(cv::Point bt, int dg, double dist);
+double integral_cost_function(cv::Point S, cv::Point U);
+double cost_function(cv::Point S, cv::Point U);
+double goal_probability(cv::Point S, cv::Point G, int dist);
 
 int main() {
   player pls[MAX_P300];
@@ -43,8 +46,11 @@ int main() {
   std::cout << "[ a ] send motor imagery left command " << std::endl;
   std::cout << "[ m ] switch p300 setter mode" << std::endl;
   std::cout << "[ p ] robot moves " << std::endl;
+  std::cout << "[ r ] restar the simulation " << std::endl;
+  std::cout << "[ q ] quit the simulation " << std::endl;
   std::cout << "[ h ] help " << std::endl;
-  
+  p300_check(pls,bt);
+
   while(true){
     show_map( bt, pls);
     cmd = cv::waitKey(0);
@@ -52,6 +58,13 @@ int main() {
 
     if(cmd == QUIT){
       break;
+    }
+    else if(cmd == RESTART){
+      for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
+      _init_bot(&bt);
+      p300_switch = 0;
+      dis = 0;
+      p300_check(pls,bt);
     }
     else if(cmd >= '0' && cmd <= '9' ){
       for(int i = 0; i < MAX_P300; i++){
@@ -93,6 +106,7 @@ int main() {
         }
       }
       p300_check(pls,bt);
+      bt.current_pos = calculate_point(bt.current_pos, bt.current_direction, bt.radius);
     }
     else{
       std::cout << "\t\tHELP\t " << std::endl;
@@ -102,6 +116,8 @@ int main() {
       std::cout << "[ a ] send motor imagery left command " << std::endl;
       std::cout << "[ m ] switch p300 setter mode" << std::endl;
       std::cout << "[ p ] robot moves " << std::endl;
+      std::cout << "[ r ] restar the simulation " << std::endl;
+      std::cout << "[ q ] quit the simulation " << std::endl;
       std::cout << "[ h ] help " << std::endl;
 
     }
@@ -131,7 +147,7 @@ void _init_bot(struct bot *bt){
   bt->current_pos = cv::Point(x,y);
   bt->radius = 5;
   bt->radius_area = 60;
-  bt->radius_dist = 120;
+  bt->radius_dist = 150;
   bt->color =  cv::Scalar(0,0,0);
   _init_distribution(&bt->dir,(double)MAX_DIRECTION/2, 90.0 );
   bt->current_direction = MAX_DIRECTION/2;
@@ -156,18 +172,15 @@ void show_map( struct bot bt, struct player pls[MAX_P300]){
   cv::String window_name = "Map";
   cv::Mat img = map.clone();
 
-  // draws FOV
-  cv::Point pt3 = calculate_point(bt.current_pos, bt.current_direction-FOV,LENGHT_FOW );
-  cv::line(img,bt.current_pos,pt3,cv::Scalar(0,0,0),2,CV_AA,0);
-
-  cv::Point pt4 = calculate_point(bt.current_pos, bt.current_direction+FOV,LENGHT_FOW );
-  cv::line(img,bt.current_pos,pt4,cv::Scalar(0,0,0),2,CV_AA,0);
-
-  cv::Point rook_points[1][3] = { bt.current_pos, pt3, pt4};
-  const cv::Point* ppt[1] = { rook_points[0] };
-  int npt[] = {3};
-  cv::fillPoly(img,ppt, npt,1,cv::Scalar(200,200,200),CV_AA, 0,cv::Point());
-
+  // draw FOV
+  cv::Vec3b color_bkg;color_bkg[0] = 200;color_bkg[1] = 200;color_bkg[2] = 200;
+  for(int i = bt.current_direction-FOV; i < bt.current_direction+FOV; i++){
+    for(int j = 0; j < LENGHT_FOW; j++){
+      cv::ellipse(img, bt.current_pos, cv::Size(j,j), 0.0, (double)i+(MAX_DIRECTION/4) , (double)(i + 1)+(MAX_DIRECTION/4),color_bkg, 2, CV_AA,0 );
+    }  
+  }
+  
+  // draw bot
   cv::circle(img, bt.current_pos, bt.radius, bt.color, -1, CV_AA);
   cv::circle(img, bt.current_pos, bt.radius_area, bt.color, -1, CV_AA);
   cv::circle(img, bt.current_pos, bt.radius_dist, bt.color, 1, CV_AA);
@@ -187,8 +200,7 @@ void show_map( struct bot bt, struct player pls[MAX_P300]){
     color[1] = (int)(coef_c * bt.dir.dir[i]);
     for(int j = bt.radius_area; j < bt.radius_dist && j < bt.radius_area+(coef_r*bt.dir.dir[i]); j++){
       cv::ellipse(img, bt.current_pos, cv::Size(j,j), 0.0, (double)i+(MAX_DIRECTION/4) , (double)(i + 1)+(MAX_DIRECTION/4),color, 2, CV_AA,0 );
-    }
-    
+    }  
   }
 
   
@@ -206,8 +218,10 @@ void show_map( struct bot bt, struct player pls[MAX_P300]){
     pos.x = pos.x-(pls[i].size/2);
     cv::circle(img, pls[i].pos, pls[i].size, pls[i].color, (int)(pls[i].p*20), CV_AA);
     cv::putText(img, str,pos,cv::FONT_HERSHEY_COMPLEX_SMALL,0.5,cv::Scalar(0,0,0),1,CV_AA);
-    }
- 
+  }
+  cv::namedWindow(window_name, CV_WINDOW_NORMAL);
+  double ratio = MAX_DIMENSION*MAP_ROWS/MAP_COLS;
+  cv::resizeWindow(window_name, cv::Size(MAX_DIMENSION, ratio));
   cv::imshow(window_name,img);
 }
 
@@ -261,14 +275,17 @@ void p300_set_fixed(struct player pls[MAX_P300], int n){                        
   }
 }
 
-void p300_check(struct player pls[MAX_P300], struct bot bt){                       // FOV-based control of p300 probability 
+void p300_check(struct player pls[MAX_P300], struct bot bt){                      // FOV-based control of p300 probability 
+  double max_lenght = LENGHT_FOW;        
   for(int i = 0; i < MAX_P300; i++){
     int dg_p = calculate_degree(bt.current_pos, pls[i].pos)-MAX_DIRECTION/2;
     if(dg_p > MAX_DIRECTION)dg_p = dg_p%MAX_DIRECTION;
     if(dg_p < 0 ) dg_p = MAX_DIRECTION + dg_p;
     int dg_l = bt.current_direction - FOV;
     int dg_r = bt.current_direction + FOV;
-    if(dg_l > dg_p || dg_r < dg_p){
+
+    double distance = dist(bt.current_pos, pls[i].pos);
+    if(dg_l > dg_p || dg_r < dg_p || distance > max_lenght){
       pls[i].p = 0;
     }
     else if(dg_l < dg_p && dg_r > dg_p && (pls[i].p == 0 || pls[i].p != pls[i].p)){
@@ -332,9 +349,18 @@ void motor_imagery_left(struct bot *bt){                                        
 
 void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){           // send the p300 command
   std::cout << "P300 command!" << std::endl;
+  double g_p[MAX_P300];
+  double acc = 0;
+  for(int i = 0; i < MAX_P300; i++){
+    g_p[i] = goal_probability(bt.current_pos, pls[i].pos, bt.radius);
+    acc = acc + g_p[i];
+    //std::cout << i << " - " << g_p[i] << " -- " << acc << std::endl;
+  }
+
   for(int i = 0; i < MAX_P300; i++){
     distribution k_dist;
-    _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV); // possibility to add a coefficient whitch depends of the players distance 
+    g_p[i] = g_p[i] / acc;
+    _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*(1-g_p[i])); // possibility to add a coefficient whitch depends of the players distance 
     mul_distribution(k_dist.dir, pls[i].p*NEW_P300_EFFECT);
     int shift = calculate_degree(bt.current_pos, pls[i].pos);
     shift_distribution(k_dist.dir, shift);
@@ -427,7 +453,6 @@ int calc_direction(double *in){                                                 
   return max_pos;
 }
 
-
 cv::Point calculate_point(cv::Point bt, int dg, double dist){                     // calculare the point at distance dist and degree dg from bt
   cv::Point pt;
 
@@ -439,4 +464,24 @@ cv::Point calculate_point(cv::Point bt, int dg, double dist){                   
   pt.y = bt.y + (int)c;
 
   return pt;
+}
+
+double goal_probability(cv::Point S, cv::Point G, int dist){
+  double res = 0;
+  cv::Point U = calculate_point(S, calculate_degree(S,G), dist);
+  res = exp(-cost_function(S,U))*integral_cost_function(U,G)/integral_cost_function(S,G);
+  return res;
+}
+
+double cost_function(cv::Point S, cv::Point U){ 
+  double res = 0;
+  res = dist(S,U)/LENGHT_FOW;
+  return res;
+}
+
+double integral_cost_function(cv::Point S, cv::Point U){
+  double res = 0;
+  double c = - cost_function(S,U);
+  res = (-1/c)*exp(c);
+  return res;
 }

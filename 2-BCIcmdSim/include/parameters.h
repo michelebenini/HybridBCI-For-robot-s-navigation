@@ -4,6 +4,7 @@
 #include "math.h"
 
 // drawing parameters
+#define MAX_DIMENSION 1000
 #define MAP_ROWS 800
 #define MAP_COLS 1000
 #define DIRECTION_LENGHT 150
@@ -34,6 +35,7 @@
 #define P300_switch 'm'                                   // switch to p300 manual setting
 #define PLAY 'p'                                          // robot rotation to target direction
 #define QUIT 'q'                                          // quit command
+#define RESTART 'r'
 
 struct distribution                                       // struct represent normal distribution
 {
