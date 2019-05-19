@@ -356,16 +356,17 @@ void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){         
     acc = acc + g_p[i];
     //std::cout << i << " - " << g_p[i] << " -- " << acc << std::endl;
   }
-
+  mul_distribution(dis->dir, PAST_EFFECT);
   for(int i = 0; i < MAX_P300; i++){
     distribution k_dist;
     g_p[i] = g_p[i] / acc;
     _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*(1-g_p[i])); // possibility to add a coefficient whitch depends of the players distance 
-    mul_distribution(k_dist.dir, pls[i].p*NEW_P300_EFFECT);
+    mul_distribution(k_dist.dir, NEW_P300_EFFECT*pls[i].p);
     int shift = calculate_degree(bt.current_pos, pls[i].pos);
     shift_distribution(k_dist.dir, shift);
-    mul_distribution(dis->dir, PAST_EFFECT);
     sum_distribution(dis->dir, k_dist.dir);
+
+    //std::cout << "[ " << i << " ] " << pls[i].pos<< " shift: " << shift << " g_p = " << g_p[i] << " p(i) = " << pls[i].p << std::endl;
   }
   double tot = tot_distribution(dis->dir);
   mul_distribution(dis->dir, 1/tot);
@@ -384,10 +385,11 @@ void shift_distribution(double *out, int shift){
   }
 
   for(int i = 0; i < MAX_DIRECTION; i++){
-    int index = (shift+i);
-    if(index > MAX_DIRECTION)index = index%MAX_DIRECTION;
+    int index = i-shift;
+    if(index >= MAX_DIRECTION)index = index-MAX_DIRECTION;
     if(index < 0)index = MAX_DIRECTION+index;
-    out[index] = in[i];
+    out[i] = in[index];
+    
   }
   
 }

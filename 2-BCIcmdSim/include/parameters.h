@@ -19,7 +19,7 @@
 #define NEW_P300_EFFECT 1                                 // effect of p300 on the distribution
 #define NEW_MI_EFFECT 1                                   // effect of Motor imagery on the distribution
 #define NEW_STAY_EFFECT 1                                 // effect of stability on the distribution
-#define PAST_EFFECT 2                                     // effect of past commands on the distribution
+#define PAST_EFFECT 0.1                                     // effect of past commands on the distribution
 
 // bot parameters
 #define MAX_DIRECTION 360                                 // possible angles 
