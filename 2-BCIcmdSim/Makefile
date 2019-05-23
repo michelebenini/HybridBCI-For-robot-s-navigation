@@ -9,13 +9,13 @@ setting = 1
 CC = g++ -std=c++11 
 AR = ar rc
 LIBS = `pkg-config --cflags --libs opencv`
-INC = -Iinclude/
+INC = -Iinclude/ 
 
 
 # ---------------------------------------------------------------------
 # Rules
 # ---------------------------------------------------------------------
-CFLAGS = 
+CFLAGS = -O0
 ##CFLAGS = -Wall -g -O0 
 RM = rm -rf
 

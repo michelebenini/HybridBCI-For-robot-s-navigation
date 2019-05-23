@@ -2,6 +2,7 @@
 #include "opencv2/imgproc.hpp"
 #include "iostream"
 #include "math.h"
+#include "thread"
 
 // drawing parameters
 #define MAX_DIMENSION 1000
