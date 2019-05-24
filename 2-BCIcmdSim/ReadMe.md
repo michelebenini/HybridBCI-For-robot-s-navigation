@@ -35,7 +35,7 @@ The P300's commands would be relative to a flash on a person's face that tell us
 
 Let P<sub>PAST</sub>  the probability distribution derived from the past command, let P<sub>BCI</sub>(n) the probability returned by the n-th person selected, let D(n) the direction relative to the n-th person, let P<sub>G</sub>(n) the probability that the goal n-th person is selected the next probability distribution P<sub>NEXT</sub> is obtained using:
 
- P<sub>NEXT</sub> = P<sub>PAST</sub> * E<sub>PAST</sub> + `Σ`<sub>n=1</sub><sup>N</sup> [ N( D( ( n ) , STDDEV<sub>P300</sub> * (1 - P_G( n ) )) * P<sub>BCI</sub>( n )] 
+ P<sub>NEXT</sub> = P<sub>PAST</sub> * E<sub>PAST</sub> + ( 1 - E<sub>PAST</sub> )*`Σ`<sub>n=1</sub><sup>N</sup> [ N( D( ( n ) , STDDEV<sub>P300</sub> * (1 - P<sub>G</sub>( n ) )) * P<sub>BCI</sub>( n )] 
 
 Where STDDEV<sub>P300</sub> is a prefixed constant and E<sub>PAST</sub> represent how much the past commands affect the distribution. The result will be normalized to have a probability distribution. The P<sub>G</sub>(n) is calculated by the following formula:
 
@@ -45,8 +45,12 @@ Where STDDEV<sub>P300</sub> is a prefixed constant and E<sub>PAST</sub> represen
  
  The motor imagery commands tell us if the user want to go to left or to right otherwise the user send nothing. This commands generate two new Gaussian, the first one represent the relative direction of the command so it has fixed standard deviation STDDEV<sub>MI</sub> and mean centered 90 degrees to left or to right of the current direction. The second Gaussian is to maintain the direction that the robot is already following, this Gaussian has standard deviation STDDEV<sub>STAY</sub> and it is centered on the current direction dir<sub>current</sub> of the robot. So for a motor imagery command we have:
  
-  P<sub>NEXT</sub> = P<sub>PAST</sub> * E<sub>PAST</sub> + N( dir<sub>current</sub> `±` 90 , STDDEV<sub>MI</sub>) + E<sub>STAY</sub>* N( dir<sub>current</sub> , STDDEV<sub>STAY</sub>) 
+  P<sub>NEXT</sub> = P<sub>PAST</sub> * E<sub>PAST</sub> + ( 1- E<sub>PAST</sub> - E<sub>STAY</sub>)N( dir<sub>current</sub> `±` DEGREE<sub>MI</sub> , STDDEV<sub>MI</sub>) + E<sub>STAY</sub>* N( dir<sub>target</sub> , STDDEV<sub>STAY</sub>) 
  
  Where E<sub>STAY</sub> is a costant represent how many the current direction is important.
  
  In this simulation the robot can make a move when the user press [p] so it calculate the direction with maximum probability, it change is direction of one degree to the maximum and makes one move, if it already is in the maximum probability direction it goes straight of one move for each [p] pressed.
+
+ We assume that if the user don't send commands the robot has the right target direction so, while the robot is moving, a new gaussian is generated on the target direction. Then the D<sub>t+1</sub> becomes:
+
+ D<sub>t+1</sub> = D<sub>t</sub> * E<sub>PAST</sub> + (1-E<sub>PAST</sub> )N( dir<sub>target</sub> , STDDEV<sub>MOVE</sub>)

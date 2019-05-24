@@ -15,12 +15,15 @@
 #define FIXED_P300 0.7                                    // probability of selected player in p300
 #define P300_STDDEV 10.0                                  // standard deviation of gaussian for p300 commands
 #define MI_STDDEV 100.0                                    // standard deviation of gaussian for motor imagery commands
-#define STAY_STDDEV 180.0                                 // standard deviation of gaussian to go straight
+#define STAY_STDDEV 100.0                                 // standard deviation of gaussian to go straight
+#define MOVE_STDDEV 1
 
-#define NEW_P300_EFFECT 1                                 // effect of p300 on the distribution
-#define NEW_MI_EFFECT 3                                   // effect of Motor imagery on the distribution
-#define NEW_STAY_EFFECT 1                                 // effect of stability on the distribution
-#define PAST_EFFECT 0.2                                     // effect of past commands on the distribution
+
+#define NEW_STAY_EFFECT 0.3                                 // effect of stability on the distribution
+#define MOVE_EFFECT 0.01
+#define P300_PAST_EFFECT 0.3                              // effect of past commands on the distribution
+#define MI_PAST_EFFECT 0.1
+#define MI_DEGREE 90
 
 // bot parameters
 #define MAX_DIRECTION 360                                 // possible angles 
