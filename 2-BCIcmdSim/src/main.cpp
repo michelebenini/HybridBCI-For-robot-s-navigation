@@ -14,6 +14,7 @@ void motor_imagery_right(struct bot *bt);
 void motor_imagery_left(struct bot *bt);
 void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt);
 void p300_check(struct player pls[MAX_P300], struct bot bt);
+void bot_move(struct bot *bt, struct player pls[MAX_P300]);
 
 void sum_distribution(double *out, double *in);
 void shift_distribution(double *in, int shift);
@@ -54,7 +55,8 @@ int main() {
   while(true){
     show_map( bt, pls);
     cmd = cv::waitKey(0);
-    std::cout << std::endl << "Command received : [ " << cmd << " ]" << std::endl;
+    std::cout << std::endl << "---------------------------" << std::endl;
+    std::cout << "Command received : [ " << cmd << " ]" << std::endl;
 
     if(cmd == QUIT){
       break;
@@ -94,19 +96,7 @@ int main() {
         p300_switch = 0;
     }
     else if( cmd == PLAY){  
-      dis = bt.current_direction - bt.target_direction;
-      if((dis >= - MAX_DIRECTION/2) && (dis < 0 || dis >= MAX_DIRECTION/2)){
-        bt.current_direction++;
-        bt.current_direction = bt.current_direction%360;
-      }
-      else if((dis <= MAX_DIRECTION/2) && (dis > 0 || dis <= -MAX_DIRECTION/2)){
-        bt.current_direction--;
-        if(bt.current_direction < 0){
-          bt.current_direction = 360 - bt.current_direction;
-        }
-      }
-      p300_check(pls,bt);
-      bt.current_pos = calculate_point(bt.current_pos, bt.current_direction, bt.radius);
+      bot_move(&bt, pls);
     }
     else{
       std::cout << "\t\tHELP\t " << std::endl;
@@ -125,7 +115,7 @@ int main() {
     dis = bt.current_direction - bt.target_direction;
     std::cout << "Current direction : " << bt.current_direction << std::endl;
     std::cout << "Target direction : " << bt.target_direction << std::endl;
-    std::cout << "Distance : " << abs(dis) << "°" << std::endl;
+    std::cout << "Direction distance : " << abs(dis) << "°" << std::endl;
   }
 
 }
@@ -306,18 +296,18 @@ void motor_imagery_right(struct bot *bt){                                       
 
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
-  mul_distribution(mi.dir, NEW_MI_EFFECT);
-  int shift = (bt->current_direction-(MAX_DIRECTION/4));
+  mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
+  int shift = (bt->current_direction-(MI_DEGREE));
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, STAY_STDDEV);
   mul_distribution(k_dist.dir, NEW_STAY_EFFECT);
   
-  mul_distribution(bt->dir.dir, PAST_EFFECT);
+  mul_distribution(bt->dir.dir, MI_PAST_EFFECT);
   sum_distribution(bt->dir.dir, mi.dir);
 
-  shift_distribution( k_dist.dir, (bt->current_direction-MAX_DIRECTION/2));
+  shift_distribution( k_dist.dir, (bt->target_direction-MAX_DIRECTION/2));
   sum_distribution(bt->dir.dir, k_dist.dir);
   
   double tot = tot_distribution(bt->dir.dir);
@@ -329,15 +319,15 @@ void motor_imagery_left(struct bot *bt){                                        
   
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
-  mul_distribution(mi.dir, NEW_MI_EFFECT);
-  int shift = (bt->current_direction+(MAX_DIRECTION/4));
+  mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
+  int shift = (bt->current_direction+(MI_DEGREE));
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, STAY_STDDEV);
   mul_distribution(k_dist.dir, NEW_STAY_EFFECT);
   
-  mul_distribution(bt->dir.dir, PAST_EFFECT);
+  mul_distribution(bt->dir.dir, MI_PAST_EFFECT);
   sum_distribution(bt->dir.dir, mi.dir);
 
   shift_distribution( k_dist.dir, (bt->current_direction-MAX_DIRECTION/2));
@@ -356,12 +346,12 @@ void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){         
     acc = acc + g_p[i];
     //std::cout << i << " - " << g_p[i] << " -- " << acc << std::endl;
   }
-  mul_distribution(dis->dir, PAST_EFFECT);
+  mul_distribution(dis->dir, P300_PAST_EFFECT);
   for(int i = 0; i < MAX_P300; i++){
     distribution k_dist;
     g_p[i] = g_p[i] / acc;
     _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*(1-g_p[i])); // possibility to add a coefficient whitch depends of the players distance 
-    mul_distribution(k_dist.dir, NEW_P300_EFFECT*pls[i].p);
+    mul_distribution(k_dist.dir, (1-P300_PAST_EFFECT)*pls[i].p);
     int shift = calculate_degree(bt.current_pos, pls[i].pos);
     shift_distribution(k_dist.dir, shift);
     sum_distribution(dis->dir, k_dist.dir);
@@ -370,6 +360,34 @@ void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){         
   }
   double tot = tot_distribution(dis->dir);
   mul_distribution(dis->dir, 1/tot);
+}
+
+void bot_move(struct bot *bt, struct player pls[MAX_P300]){
+  std::cout << "Move command!" << std::endl;
+  int dis = bt->current_direction - bt->target_direction;
+  if((dis >= - MAX_DIRECTION/2) && (dis < 0 || dis >= MAX_DIRECTION/2)){
+    bt->current_direction++;
+    bt->current_direction = bt->current_direction%360;
+  }
+  else if((dis <= MAX_DIRECTION/2) && (dis > 0 || dis <= -MAX_DIRECTION/2)){
+    bt->current_direction--;
+    if(bt->current_direction < 0){
+      bt->current_direction = 360 - bt->current_direction;
+    }
+  }
+  p300_check(pls,*bt);
+  bt->current_pos = calculate_point(bt->current_pos, bt->current_direction, bt->radius);
+  
+  distribution move;
+  _init_distribution(&move, (double)MAX_DIRECTION/2, MOVE_STDDEV);
+  mul_distribution(move.dir, MOVE_EFFECT);
+  int shift = (bt->target_direction-(MAX_DIRECTION/2));
+  shift_distribution(move.dir, shift);
+  sum_distribution(bt->dir.dir, move.dir);
+  
+  double tot = tot_distribution(bt->dir.dir);
+  mul_distribution(bt->dir.dir, 1/tot);
+
 }
 
 void sum_distribution(double *out, double *in){
@@ -487,3 +505,8 @@ double integral_cost_function(cv::Point S, cv::Point U){
   res = (-1/c)*exp(c);
   return res;
 }
+
+
+/*
+processi di markov completamente osservabili
+*/
