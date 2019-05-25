@@ -7,7 +7,7 @@ $ make
 ## Execution
 You can find the executable in the bin folder, to execute it from the main folder use:
 ```
-$ ./bin/sim0.o
+$ ./bin/sim.o
 ```
 ## Commands
 When the code is executing press:
