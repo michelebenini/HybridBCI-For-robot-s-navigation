@@ -55,7 +55,8 @@ int main() {
   while(true){
     show_map( bt, pls);
     cmd = cv::waitKey(0);
-    std::cout << std::endl << "Command received : [ " << cmd << " ]" << std::endl;
+    std::cout << std::endl << "---------------------------" << std::endl;
+    std::cout << "Command received : [ " << cmd << " ]" << std::endl;
 
     if(cmd == QUIT){
       break;
@@ -362,6 +363,7 @@ void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){         
 }
 
 void bot_move(struct bot *bt, struct player pls[MAX_P300]){
+  std::cout << "Move command!" << std::endl;
   int dis = bt->current_direction - bt->target_direction;
   if((dis >= - MAX_DIRECTION/2) && (dis < 0 || dis >= MAX_DIRECTION/2)){
     bt->current_direction++;
@@ -387,6 +389,7 @@ void bot_move(struct bot *bt, struct player pls[MAX_P300]){
   mul_distribution(bt->dir.dir, 1/tot);
 
 }
+
 void sum_distribution(double *out, double *in){
   for(int i = 0; i < MAX_DIRECTION; i++){
     out[i] = out[i] + in[i];
@@ -505,6 +508,5 @@ double integral_cost_function(cv::Point S, cv::Point U){
 
 
 /*
-somma -> moltiplicazione
 processi di markov completamente osservabili
 */
