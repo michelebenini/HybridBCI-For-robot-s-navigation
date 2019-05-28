@@ -3,6 +3,10 @@
 void _init_player(struct player *pl, int n);
 void _init_bot(struct bot *bt);
 void _init_distribution(struct distribution *dis, double mean, double std_dev);
+void _init_go_transition_matrix(Eigen::MatrixXd *mx, int target);
+void _init_mi_r_transition_matrix(Eigen::MatrixXd *mx);
+void _init_mi_l_transition_matrix(Eigen::MatrixXd *mx);
+void _init_p300_transition_matrix(Eigen::MatrixXd *mx, struct player pls[MAX_P300], struct bot bt);
 double normal_distribution_calc(int n, double mean, double std_dev);
 
 void show_map(struct bot bt, struct player pls[MAX_P300]);
@@ -17,6 +21,7 @@ void p300_check(struct player pls[MAX_P300], struct bot bt);
 void bot_move(struct bot *bt, struct player pls[MAX_P300]);
 
 void sum_distribution(double *out, double *in);
+void mul_distribution(double *out, double *in);
 void shift_distribution(double *in, int shift);
 void mul_distribution(double *out, double mul);
 double tot_distribution(double *in);
@@ -29,16 +34,21 @@ double integral_cost_function(cv::Point S, cv::Point U);
 double cost_function(cv::Point S, cv::Point U);
 double goal_probability(cv::Point S, cv::Point G, int dist);
 
+void eigen_to_dir(Eigen::MatrixXd mx, double dir[MAX_DIRECTION]);
+void dir_to_eigen(double dir[MAX_DIRECTION], Eigen::MatrixXd *mx);
+
 int main() {
   player pls[MAX_P300];
   for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
 
   bot bt;
   _init_bot(&bt);
-     
+  
   char cmd;
   int p300_switch = 0;
+  int marcov_process = 0;
   int dis = 0;
+  int help = 0;
   
   std::cout << "\t\tHELP\t " << std::endl;
   std::cout << "[ 0 - MAX_P300 ] set p300 probability" << std::endl;
@@ -47,6 +57,7 @@ int main() {
   std::cout << "[ a ] send motor imagery left command " << std::endl;
   std::cout << "[ m ] switch p300 setter mode" << std::endl;
   std::cout << "[ p ] robot moves " << std::endl;
+  std::cout << "[ c ] switch Marcov process " << std::endl;
   std::cout << "[ r ] restar the simulation " << std::endl;
   std::cout << "[ q ] quit the simulation " << std::endl;
   std::cout << "[ h ] help " << std::endl;
@@ -57,11 +68,12 @@ int main() {
     cmd = cv::waitKey(0);
     std::cout << std::endl << "---------------------------" << std::endl;
     std::cout << "Command received : [ " << cmd << " ]" << std::endl;
-
+    
     if(cmd == QUIT){
       break;
     }
     else if(cmd == RESTART){
+      std::cout << "RESTART" << std::endl;
       for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
       _init_bot(&bt);
       p300_switch = 0;
@@ -80,25 +92,80 @@ int main() {
           }
         }
       }
-    }else if(cmd == R){
-      motor_imagery_right(&bt);
     }
-    else if(cmd == L){
-      motor_imagery_left(&bt);
+    else if(cmd == MP_SWITCH){
+      if(marcov_process == 0){
+        std::cout << "Marcov process execution set" << std::endl;
+        marcov_process = 1; 
+        }
+      else{
+        std::cout << "Normal Execution set" << std::endl;
+        marcov_process = 0;
+      }
     }
-    else if(cmd == P300){
-      p300_send(&bt.dir, pls, bt);
+    else if(marcov_process == 0){
+      if(cmd == R){
+        motor_imagery_right(&bt);
+      }
+      else if(cmd == L){
+        motor_imagery_left(&bt);
+      }
+      else if(cmd == P300){
+        p300_send(&bt.dir, pls, bt);
+      }
+      else if( cmd == PLAY){  
+        bot_move(&bt, pls);
+      }
+      else
+      {
+        help = 1;
+      }
+      
     }
-    else if(cmd == P300_switch){
+    else if(marcov_process == 1){
+      
+      Eigen::MatrixXd actual = Eigen::MatrixXd::Zero(MAX_DIRECTION,1); 
+      dir_to_eigen(bt.dir.dir, &actual);
+      Eigen::MatrixXd mx = Eigen::MatrixXd::Zero(MAX_DIRECTION,MAX_DIRECTION);
+      if(cmd == R){
+        std::cout << "Motor imagery right command" << std::endl;
+        _init_mi_r_transition_matrix(&mx);
+        actual = mx * actual;
+        eigen_to_dir(actual,bt.dir.dir);
+      }
+      else if(cmd == L){
+        std::cout << "Motor imagery left command" << std::endl;
+        _init_mi_l_transition_matrix(&mx);
+        actual = mx * actual;
+        eigen_to_dir(actual,bt.dir.dir);
+      }
+      else if(cmd == P300){
+        std::cout << "P300 command" << std::endl;
+        _init_p300_transition_matrix(&mx, pls, bt);
+        actual = mx * actual;
+        eigen_to_dir(actual,bt.dir.dir);
+      }
+      else if( cmd == PLAY){  
+        std::cout << "Play command" << std::endl;
+        _init_go_transition_matrix(&mx, bt.target_direction);
+        actual = mx * actual;
+        eigen_to_dir(actual,bt.dir.dir);
+        bot_move(&bt, pls);
+      }
+      else
+      {
+        help = 1;
+      }
+      mx.resize(0,0);
+      actual.resize(0,0);
+    }else if(cmd == P300_switch){
       if(p300_switch == 0)
         p300_switch=1;
       else 
         p300_switch = 0;
     }
-    else if( cmd == PLAY){  
-      bot_move(&bt, pls);
-    }
-    else{
+    if (help == 1 ){
+      help = 0;
       std::cout << "\t\tHELP\t " << std::endl;
       std::cout << "[ 0 - MAX_P300 ] set p300 probability" << std::endl;
       std::cout << "[ s ] send p300 " << std::endl;
@@ -106,6 +173,7 @@ int main() {
       std::cout << "[ a ] send motor imagery left command " << std::endl;
       std::cout << "[ m ] switch p300 setter mode" << std::endl;
       std::cout << "[ p ] robot moves " << std::endl;
+      std::cout << "[ c ] switch Marcov process " << std::endl;
       std::cout << "[ r ] restar the simulation " << std::endl;
       std::cout << "[ q ] quit the simulation " << std::endl;
       std::cout << "[ h ] help " << std::endl;
@@ -149,6 +217,68 @@ void _init_distribution(struct distribution *dis, double mean, double std_dev){
   dis->std_dev = std_dev;
   for(int i = 0; i < MAX_DIRECTION; i++){
     dis->dir[i] = normal_distribution_calc(i, mean, std_dev); 
+  }
+}
+
+void _init_go_transition_matrix(Eigen::MatrixXd *mx, int target){
+  for(int i = 0; i < mx->rows(); i++){
+    for(int j = 0; j < mx->cols(); j++){
+      int index = i;
+      int mean = target;
+      if(index-mean > MAX_DIRECTION/2) index = index - MAX_DIRECTION;
+      if(mean - index > MAX_DIRECTION/2) index = index + MAX_DIRECTION;
+      (*mx)(i,j) = normal_distribution_calc(index, mean, MOVE_STDDEV);
+    }
+  }
+}
+
+void _init_mi_r_transition_matrix(Eigen::MatrixXd *mx){
+  for(int i = 0; i < mx->rows(); i++){
+    for(int j = 0; j < mx->cols(); j++){
+      int index = i;
+      int mean = (j + MI_DEGREE)%MAX_DIRECTION;
+      if(index-mean > MAX_DIRECTION/2) index = index - MAX_DIRECTION;
+      if(mean - index > MAX_DIRECTION/2) index = index + MAX_DIRECTION;
+      (*mx)(i,j) = normal_distribution_calc(index, mean, MI_STDDEV);
+    }
+  }
+}
+
+void _init_mi_l_transition_matrix(Eigen::MatrixXd *mx){
+  for(int i = 0; i < mx->rows(); i++){
+    for(int j = 0; j < mx->cols(); j++){
+      int index = i;
+      int mean = (MAX_DIRECTION + j - MI_DEGREE)%MAX_DIRECTION;
+      if(index-mean > MAX_DIRECTION/2) index = index - MAX_DIRECTION;
+      if(mean - index > MAX_DIRECTION/2) index = index + MAX_DIRECTION;
+      (*mx)(i,j) = normal_distribution_calc(index, mean, MI_STDDEV);
+    }
+  }
+}
+
+void _init_p300_transition_matrix(Eigen::MatrixXd *mx, struct player pls[MAX_P300], struct bot bt){
+  for(int k = 0; k < MAX_P300; k++){
+    for(int i = 0; i < mx->rows(); i++){
+      for(int j = 0; j < mx->cols(); j++){
+        int index = i;
+        int mean = (MAX_DIRECTION/2 + calculate_degree(bt.current_pos, pls[k].pos) )%MAX_DIRECTION;
+        if(index-mean > MAX_DIRECTION/2) index = index - MAX_DIRECTION;
+        if(mean - index > MAX_DIRECTION/2) index = index + MAX_DIRECTION;
+        (*mx)(i,j) = (*mx)(i,j) + normal_distribution_calc(index, mean, P300_STDDEV)*pls[k].p;
+      }
+    }
+  }
+}
+
+void dir_to_eigen(double dir[MAX_DIRECTION], Eigen::MatrixXd *mx){
+  for(int i = 0; i < MAX_DIRECTION; i++){
+    (*mx)(i,0) = dir[i];
+  }
+}
+
+void eigen_to_dir(Eigen::MatrixXd mx, double dir[MAX_DIRECTION]){
+  for(int i = 0; i < MAX_DIRECTION; i++){
+    dir[i] = mx(i,0);
   }
 }
 
@@ -393,6 +523,12 @@ void bot_move(struct bot *bt, struct player pls[MAX_P300]){
 void sum_distribution(double *out, double *in){
   for(int i = 0; i < MAX_DIRECTION; i++){
     out[i] = out[i] + in[i];
+  }
+}
+
+void mul_distribution(double *out, double *in){
+  for(int i = 0; i < MAX_DIRECTION; i++){
+    out[i] = out[i] * in[i];
   }
 }
 

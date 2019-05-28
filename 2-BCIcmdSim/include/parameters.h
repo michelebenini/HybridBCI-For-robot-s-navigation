@@ -3,6 +3,7 @@
 #include "iostream"
 #include "math.h"
 #include "thread"
+#include <Eigen/Dense>
 
 // drawing parameters
 #define MAX_DIMENSION 1000
@@ -40,6 +41,7 @@
 #define PLAY 'p'                                          // robot rotation to target direction
 #define QUIT 'q'                                          // quit command
 #define RESTART 'r'
+#define MP_SWITCH 'c'
 
 struct distribution                                       // struct represent normal distribution
 {
