@@ -427,7 +427,7 @@ void motor_imagery_right(struct bot *bt){                                       
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
   mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
-  int shift = (bt->current_direction-(MI_DEGREE));
+  int shift = MI_DEGREE;
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
@@ -450,7 +450,7 @@ void motor_imagery_left(struct bot *bt){                                        
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
   mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
-  int shift = (bt->current_direction+(MI_DEGREE));
+  int shift = -MI_DEGREE;
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
@@ -460,7 +460,7 @@ void motor_imagery_left(struct bot *bt){                                        
   mul_distribution(bt->dir.dir, MI_PAST_EFFECT);
   sum_distribution(bt->dir.dir, mi.dir);
 
-  shift_distribution( k_dist.dir, (bt->current_direction-MAX_DIRECTION/2));
+  shift_distribution( k_dist.dir, (bt->target_direction-MAX_DIRECTION/2));
   sum_distribution(bt->dir.dir, k_dist.dir);
   
   double tot = tot_distribution(bt->dir.dir);

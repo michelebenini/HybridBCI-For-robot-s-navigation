@@ -24,7 +24,7 @@
 #define MOVE_EFFECT 0.01
 #define P300_PAST_EFFECT 0.3                              // effect of past commands on the distribution
 #define MI_PAST_EFFECT 0.1
-#define MI_DEGREE 90
+#define MI_DEGREE 45
 
 // bot parameters
 #define MAX_DIRECTION 360                                 // possible angles 
