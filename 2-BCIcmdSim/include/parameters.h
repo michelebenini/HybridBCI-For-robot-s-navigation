@@ -13,18 +13,31 @@
 #define TARGET_DIRECTION_LENGHT 200
 
 // probability parameters
+#define START_MEAN 180
+#define START_STD 180
 #define FIXED_P300 0.7                                    // probability of selected player in p300
-#define P300_STDDEV 10.0                                  // standard deviation of gaussian for p300 commands
-#define MI_STDDEV 100.0                                    // standard deviation of gaussian for motor imagery commands
+#define P300_STDDEV 21.0                                  // standard deviation of gaussian for p300 commands
+#define MI_STDDEV 50.0                                    // standard deviation of gaussian for motor imagery commands
 #define STAY_STDDEV 100.0                                 // standard deviation of gaussian to go straight
-#define MOVE_STDDEV 1
+#define MOVE_STDDEV 10
 
 
 #define NEW_STAY_EFFECT 0.3                                 // effect of stability on the distribution
-#define MOVE_EFFECT 0.01
+#define MOVE_EFFECT 0.03
 #define P300_PAST_EFFECT 0.3                              // effect of past commands on the distribution
-#define MI_PAST_EFFECT 0.1
+#define MI_PAST_EFFECT 0.2
 #define MI_DEGREE 45
+
+// parameters for Gaus-Marcov Process
+#define A_MI 1
+#define C_MI 0.2
+#define Q_MI 10
+#define R_MI 20
+
+#define A_P300 1
+#define C_P300 0.8
+#define Q_P300 10
+#define R_P300 5
 
 // bot parameters
 #define MAX_DIRECTION 360                                 // possible angles 
@@ -38,10 +51,11 @@
 #define L 'a'                                             // left motor-imagery command
 #define P300 's'                                          // send p300 command
 #define P300_switch 'm'                                   // switch to p300 manual setting
-#define PLAY 'p'                                          // robot rotation to target direction
+#define PLAY 'w'                                          // robot rotation to target direction
 #define QUIT 'q'                                          // quit command
 #define RESTART 'r'
 #define MP_SWITCH 'c'
+#define MV_SWITCH 'p'
 
 struct distribution                                       // struct represent normal distribution
 {

@@ -11,14 +11,16 @@ double normal_distribution_calc(int n, double mean, double std_dev);
 
 void show_map(struct bot bt, struct player pls[MAX_P300]);
 void show_distribution(struct distribution dis);
+void show_legend();
 
 void p300_set(struct player pls[MAX_P300], int n);
 void p300_set_fixed(struct player pls[MAX_P300], int n);
 void motor_imagery_right(struct bot *bt);
 void motor_imagery_left(struct bot *bt);
-void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt);
+void p300_send(player pls[MAX_P300], bot *bt);
 void p300_check(struct player pls[MAX_P300], struct bot bt);
 void bot_move(struct bot *bt, struct player pls[MAX_P300]);
+void bot_move_all(struct bot *bt, struct player pls[MAX_P300]);
 
 void sum_distribution(double *out, double *in);
 void mul_distribution(double *out, double *in);
@@ -37,6 +39,14 @@ double goal_probability(cv::Point S, cv::Point G, int dist);
 void eigen_to_dir(Eigen::MatrixXd mx, double dir[MAX_DIRECTION]);
 void dir_to_eigen(double dir[MAX_DIRECTION], Eigen::MatrixXd *mx);
 
+
+void motor_imagery_right_GMP(struct bot *bt, struct player pls[MAX_P300]);
+void motor_imagery_left_GMP(struct bot *bt, struct player pls[MAX_P300]);
+void send_p300_GMP(struct bot *bt, struct player pls[MAX_P300]);
+double make_distribution(struct distribution *d);
+void Gaus_Markov_predict(double &out_mean, double &out_std, double past_mean, double past_std, double A, double noise_Q );
+void Gaus_Markov_update(double &out_mean, double &out_std, double past_mean, double past_std, double in_mean, double A, double C, double noise_R, double noise_Q );
+
 int main() {
   player pls[MAX_P300];
   for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
@@ -44,29 +54,25 @@ int main() {
   bot bt;
   _init_bot(&bt);
   
+  int count = 0;
   char cmd;
   int p300_switch = 0;
-  int marcov_process = 0;
+  int marcov_process = 2;
   int dis = 0;
+  int move = 1;
   int help = 0;
-  
-  std::cout << "\t\tHELP\t " << std::endl;
-  std::cout << "[ 0 - MAX_P300 ] set p300 probability" << std::endl;
-  std::cout << "[ s ] send p300 " << std::endl;
-  std::cout << "[ d ] send motor imagery right command " << std::endl;
-  std::cout << "[ a ] send motor imagery left command " << std::endl;
-  std::cout << "[ m ] switch p300 setter mode" << std::endl;
-  std::cout << "[ p ] robot moves " << std::endl;
-  std::cout << "[ c ] switch Marcov process " << std::endl;
-  std::cout << "[ r ] restar the simulation " << std::endl;
-  std::cout << "[ q ] quit the simulation " << std::endl;
-  std::cout << "[ h ] help " << std::endl;
+
+  distribution x;     // initial distribution
+  _init_distribution(&x,START_MEAN,START_STD);
+  bt.dir = x;
+
+  show_legend();
   p300_check(pls,bt);
 
   while(true){
+    std::cout << std::endl << "------------"<< count++ << "---------------" << std::endl;
     show_map( bt, pls);
     cmd = cv::waitKey(0);
-    std::cout << std::endl << "---------------------------" << std::endl;
     std::cout << "Command received : [ " << cmd << " ]" << std::endl;
     
     if(cmd == QUIT){
@@ -76,8 +82,13 @@ int main() {
       std::cout << "RESTART" << std::endl;
       for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
       _init_bot(&bt);
+      count = 0;
       p300_switch = 0;
+      marcov_process = 2;
       dis = 0;
+      move = 1;
+      _init_distribution(&x,START_MEAN,START_STD);
+      bt.dir = x;
       p300_check(pls,bt);
     }
     else if(cmd >= '0' && cmd <= '9' ){
@@ -94,13 +105,28 @@ int main() {
       }
     }
     else if(cmd == MP_SWITCH){
-      if(marcov_process == 0){
-        std::cout << "Marcov process execution set" << std::endl;
-        marcov_process = 1; 
+      if(marcov_process < 2){
+        marcov_process++;
+        std::cout << "Execution type changes to [ " << marcov_process << " ]" << std::endl;
+        if(marcov_process == 2)bt.dir = x;
         }
       else{
         std::cout << "Normal Execution set" << std::endl;
         marcov_process = 0;
+      }
+    }
+    else if(cmd == P300_switch){
+      if(p300_switch == 0)
+        p300_switch=1;
+      else 
+        p300_switch = 0;
+    }
+    else if(cmd == MV_SWITCH){
+      if(move == 0){
+        move = 1;
+      }
+      else{
+        move = 0;
       }
     }
     else if(marcov_process == 0){
@@ -111,10 +137,15 @@ int main() {
         motor_imagery_left(&bt);
       }
       else if(cmd == P300){
-        p300_send(&bt.dir, pls, bt);
+        p300_send(pls, &bt);
       }
       else if( cmd == PLAY){  
-        bot_move(&bt, pls);
+        if(move == 0){
+          bot_move(&bt, pls);
+        }
+        else{
+          bot_move_all(&bt, pls);
+        }
       }
       else
       {
@@ -150,7 +181,12 @@ int main() {
         _init_go_transition_matrix(&mx, bt.target_direction);
         actual = mx * actual;
         eigen_to_dir(actual,bt.dir.dir);
-        bot_move(&bt, pls);
+        if(move == 0){
+          bot_move(&bt, pls);
+        }
+        else{
+          bot_move_all(&bt, pls);
+        }
       }
       else
       {
@@ -158,11 +194,32 @@ int main() {
       }
       mx.resize(0,0);
       actual.resize(0,0);
-    }else if(cmd == P300_switch){
-      if(p300_switch == 0)
-        p300_switch=1;
-      else 
-        p300_switch = 0;
+    }else if(marcov_process == 2){
+      if(cmd == R){
+        std::cout << "Motor imagery right command" << std::endl;
+        motor_imagery_right_GMP(&bt, pls);
+      }
+      else if(cmd == L){
+        std::cout << "Motor imagery left command" << std::endl;
+        motor_imagery_left_GMP(&bt, pls);
+      }
+      else if(cmd == P300){
+        std::cout << "P300 command" << std::endl;
+        send_p300_GMP(&bt, pls);
+      }
+      else if( cmd == PLAY){  
+        std::cout << "Play command" << std::endl;
+        if(move == 0){
+          bot_move(&bt, pls);
+        }
+        else{
+          bot_move_all(&bt, pls);
+        }
+      }
+      else
+      {
+        help = 1;
+      }
     }
     if (help == 1 ){
       help = 0;
@@ -172,7 +229,8 @@ int main() {
       std::cout << "[ d ] send motor imagery right command " << std::endl;
       std::cout << "[ a ] send motor imagery left command " << std::endl;
       std::cout << "[ m ] switch p300 setter mode" << std::endl;
-      std::cout << "[ p ] robot moves " << std::endl;
+      std::cout << "[ w ] robot moves " << std::endl;
+      std::cout << "[ p ] robot moves switch " << std::endl;
       std::cout << "[ c ] switch Marcov process " << std::endl;
       std::cout << "[ r ] restar the simulation " << std::endl;
       std::cout << "[ q ] quit the simulation " << std::endl;
@@ -207,7 +265,9 @@ void _init_bot(struct bot *bt){
   bt->radius_area = 60;
   bt->radius_dist = 150;
   bt->color =  cv::Scalar(0,0,0);
-  _init_distribution(&bt->dir,(double)MAX_DIRECTION/2, 90.0 );
+  for(int i = 0; i < MAX_DIRECTION; i ++){
+    bt->dir.dir[i] = 1/MAX_DIRECTION;
+  }
   bt->current_direction = MAX_DIRECTION/2;
   bt->target_direction = MAX_DIRECTION/2;
 }
@@ -368,6 +428,51 @@ void show_distribution(struct distribution dis){
   cv::imshow(window_name,img);
 }
 
+void show_legend(){
+  cv::String window_name = "Legend";
+  cv::Mat legend(cv::Size(500, 400), CV_8UC3, cv::Scalar(255,255,255));
+  char str[2000];
+  
+  sprintf(str, "HELP");
+  putText(legend, str, cv::Point(30,30), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+  
+  sprintf(str,"[ 0 - MAX_P300 ] set p300 probability");
+  putText(legend, str, cv::Point(30,60), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+  
+  sprintf(str,"[ s ] send p300 ");
+  putText(legend, str, cv::Point(30,90), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ d ] send motor imagery right command");
+  putText(legend, str, cv::Point(30,120), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ a ] send motor imagery left command ");
+  putText(legend, str, cv::Point(30,150), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ m ] switch p300 setter mode");
+  putText(legend, str, cv::Point(30,180), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ w ] robot moves ");
+  putText(legend, str, cv::Point(30,210), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ p ] robot moves switch");
+  putText(legend, str, cv::Point(30,240), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ c ] switch Marcov process");
+  putText(legend, str, cv::Point(30,270), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ r ] restar the simulation ");
+  putText(legend, str, cv::Point(30,300), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ q ] quit the simulation ");
+  putText(legend, str, cv::Point(30,330), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  sprintf(str,"[ h ] help");
+  putText(legend, str, cv::Point(30,360), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.8, cv::Scalar(0,0,0), 1, CV_AA);
+
+  cv::namedWindow(window_name, CV_WINDOW_NORMAL);
+  cv::imshow(window_name,legend);
+}
+
 void p300_set(struct player pls[MAX_P300], int n){                                // set p300 probability 
   for(int i = 0; i < MAX_P300; i++){
     if( i == n ){
@@ -427,7 +532,7 @@ void motor_imagery_right(struct bot *bt){                                       
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
   mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
-  int shift = MI_DEGREE;
+  int shift = bt->current_direction - MAX_DIRECTION/2 + MI_DEGREE;
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
@@ -450,7 +555,7 @@ void motor_imagery_left(struct bot *bt){                                        
   distribution mi;
   _init_distribution(&mi, (double)MAX_DIRECTION/2, MI_STDDEV);
   mul_distribution(mi.dir, (1-MI_PAST_EFFECT-NEW_STAY_EFFECT));
-  int shift = -MI_DEGREE;
+  int shift = bt->current_direction -MAX_DIRECTION/2 - MI_DEGREE;
   shift_distribution(mi.dir, shift);
   
   distribution k_dist;
@@ -467,29 +572,29 @@ void motor_imagery_left(struct bot *bt){                                        
   mul_distribution(bt->dir.dir, 1/tot);
 }
 
-void p300_send(struct distribution *dis, player pls[MAX_P300], bot bt){           // send the p300 command
+void p300_send(player pls[MAX_P300], bot *bt){           // send the p300 command
   std::cout << "P300 command!" << std::endl;
   double g_p[MAX_P300];
   double acc = 0;
   for(int i = 0; i < MAX_P300; i++){
-    g_p[i] = goal_probability(bt.current_pos, pls[i].pos, bt.radius);
+    g_p[i] = goal_probability(bt->current_pos, pls[i].pos, bt->radius);
     acc = acc + g_p[i];
     //std::cout << i << " - " << g_p[i] << " -- " << acc << std::endl;
   }
-  mul_distribution(dis->dir, P300_PAST_EFFECT);
+  mul_distribution(bt->dir.dir, P300_PAST_EFFECT);
   for(int i = 0; i < MAX_P300; i++){
     distribution k_dist;
     g_p[i] = g_p[i] / acc;
     _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*(1-g_p[i])); // possibility to add a coefficient whitch depends of the players distance 
     mul_distribution(k_dist.dir, (1-P300_PAST_EFFECT)*pls[i].p);
-    int shift = calculate_degree(bt.current_pos, pls[i].pos);
+    int shift = calculate_degree(bt->current_pos, pls[i].pos);
     shift_distribution(k_dist.dir, shift);
-    sum_distribution(dis->dir, k_dist.dir);
+    sum_distribution(bt->dir.dir, k_dist.dir);
 
     //std::cout << "[ " << i << " ] " << pls[i].pos<< " shift: " << shift << " g_p = " << g_p[i] << " p(i) = " << pls[i].p << std::endl;
   }
-  double tot = tot_distribution(dis->dir);
-  mul_distribution(dis->dir, 1/tot);
+  double tot = tot_distribution(bt->dir.dir);
+  mul_distribution(bt->dir.dir, 1/tot);
 }
 
 void bot_move(struct bot *bt, struct player pls[MAX_P300]){
@@ -505,6 +610,29 @@ void bot_move(struct bot *bt, struct player pls[MAX_P300]){
       bt->current_direction = 360 - bt->current_direction;
     }
   }
+  
+  //bt->current_direction = bt->target_direction; // if the robot turn to the target direction without moving
+  
+  p300_check(pls,*bt);
+  bt->current_pos = calculate_point(bt->current_pos, bt->current_direction, bt->radius);
+  
+  distribution move;
+  _init_distribution(&move, (double)MAX_DIRECTION/2, MOVE_STDDEV);
+  mul_distribution(move.dir, MOVE_EFFECT);
+  int shift = (bt->target_direction-(MAX_DIRECTION/2));
+  shift_distribution(move.dir, shift);
+  sum_distribution(bt->dir.dir, move.dir);
+  
+  double tot = tot_distribution(bt->dir.dir);
+  mul_distribution(bt->dir.dir, 1/tot);
+
+}
+
+void bot_move_all(struct bot *bt, struct player pls[MAX_P300]){
+  std::cout << "Move command!" << std::endl;
+    
+  bt->current_direction = bt->target_direction; // if the robot turn to the target direction without moving
+  
   p300_check(pls,*bt);
   bt->current_pos = calculate_point(bt->current_pos, bt->current_direction, bt->radius);
   
@@ -642,7 +770,118 @@ double integral_cost_function(cv::Point S, cv::Point U){
   return res;
 }
 
+double make_distribution(struct distribution *d){
+  double mean = d->mean;
+  int shift = mean - MAX_DIRECTION/2;
+  _init_distribution(d, (double)MAX_DIRECTION/2, d->std_dev);
+  d->mean = mean;
+  shift_distribution(d->dir, shift);
+}
 
-/*
-processi di markov completamente osservabili
-*/
+void Gaus_Markov_predict(double &out_mean, double &out_std, double past_mean, double past_std, double A, double noise_Q ){
+  out_mean = A * past_mean;
+  out_std = A * past_std * A + noise_Q;
+}
+
+void Gaus_Markov_update(double &out_mean, double &out_std,
+                        double past_mean, double past_std, 
+                        double in_mean, 
+                        double A, double C, double noise_R, double noise_Q ){
+  double K_constant = 0.0;
+  double sgn = 0;
+  if(past_mean > in_mean){
+    sgn = -1;
+  }
+  else if(past_mean < in_mean){
+    sgn = 1;
+  }
+
+  //std::cout << "past Mean " << past_mean << " - STD " << past_std << std::endl;
+  //std::cout << "in Mean " << in_mean << " - STD " << in_std << std::endl;
+
+  K_constant = (past_std * C)/( C * past_std * C + noise_R );
+  //std::cout << "K " << K_constant << std::endl;
+
+  out_mean = past_mean + (sgn)* K_constant * ( (C * in_mean + noise_R) - C * past_mean);
+  //std::cout << "Mean " << out_mean << std::endl;
+  
+  out_std = past_std - (K_constant * ( C * past_std * C + noise_R) * K_constant);
+  //std::cout << "STD " << out_std << std::endl;
+  
+
+  out_mean = (int)out_mean % MAX_DIRECTION;
+  if(out_mean < 0)out_mean = MAX_DIRECTION + out_mean;
+  //std::cout << "out Mean " << out_mean << std::endl;
+}
+
+void motor_imagery_right_GMP(struct bot *bt, struct player pls[MAX_P300]){
+  double mean = 0;
+  double std = 0;
+  //std::cout << "MEAN : " << bt->dir.mean << std::endl;
+  Gaus_Markov_update(mean, std, bt->dir.mean, bt->dir.std_dev, bt->dir.mean + MI_DEGREE, A_MI, C_MI, R_MI, Q_MI);
+  //std::cout << "MEAN : " << mean << std::endl;
+  bt->dir.mean = mean;
+  bt->dir.std_dev = std;
+  make_distribution(&bt->dir);
+  bt->target_direction = calc_direction(bt->dir.dir);
+  bt->current_direction = bt->target_direction; // if the robot turn to the target direction without moving
+  p300_check(pls,*bt);
+  //std::cout << "NT : " << bt->dir.mean << std::endl;
+}
+
+void motor_imagery_left_GMP(struct bot *bt, struct player pls[MAX_P300]){
+  double mean = 0;
+  double std = 0;
+
+  Gaus_Markov_update(mean, std, bt->dir.mean, bt->dir.std_dev, bt->dir.mean - MI_DEGREE, A_MI, C_MI, R_MI, Q_MI);
+  //std::cout << "MEAN : " << mean << std::endl;
+  bt->dir.mean = mean;
+  bt->dir.std_dev = std;
+  make_distribution(&bt->dir);
+  bt->target_direction = calc_direction(bt->dir.dir);
+  bt->current_direction = bt->target_direction; // if the robot turn to the target direction without moving
+  p300_check(pls,*bt);
+  //std::cout << "NT : " << bt->dir.mean << std::endl;
+}
+
+void send_p300_GMP(struct bot *bt, struct player pls[MAX_P300]){
+  int m1 = 0;
+  int m2 = 1;
+  if(pls[m1].p < pls[m2].p){
+    m1 = 1;
+    m2 = 0;
+  }
+  for(int i = 2; i < MAX_P300; i++){
+    if(pls[m1].p < pls[i].p){
+      m2 = m1;
+      m1 = i;
+    }
+    else if(pls[m2].p < pls[i].p){
+      m2 = i;
+    }
+  }
+  if(pls[m2].p <= 0)
+    return;
+  double ratio = 1 - pls[m2].p/ pls[m1].p;
+  std::cout << "RATIO : " << ratio << std::endl;
+  int c = calculate_degree(bt->current_pos, pls[m1].pos);
+  int shift = c + MAX_DIRECTION/2;
+  //std::cout << "[ " << m1 <<" ] DIR : " << bt->current_direction << " shift : " << shift << " c " << c << std::endl;
+  shift = shift % MAX_DIRECTION;
+  if(shift < 0 ) shift = shift + MAX_DIRECTION;
+  //std::cout << "DIR : " << bt->current_direction << " shift : " << shift << " c " << c << std::endl;
+  
+  double mean = 0.0;
+  double std = 0.0;
+  Gaus_Markov_update(mean, std, bt->dir.mean, bt->dir.std_dev, shift, A_P300, C_P300*ratio, R_P300, Q_P300);
+  std::cout << "MEAN : " << mean << " STD : " << std << std::endl;
+  
+  bt->dir.mean = mean;
+  bt->dir.std_dev = std;
+  make_distribution(&bt->dir);
+  bt->target_direction = calc_direction(bt->dir.dir);
+  bt->current_direction = bt->target_direction; // if the robot turn to the target direction without moving
+  p300_check(pls,*bt);
+  //std::cout << "NT : " << bt->dir.mean << std::endl;
+}
+/*hybrid brain computer interface for mobile robotic application*/
