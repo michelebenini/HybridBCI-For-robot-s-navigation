@@ -61,6 +61,7 @@ int main() {
   int dis = 0;
   int move = 1;
   int help = 0;
+  int last_cmd = -1;  // no commands
 
   distribution x;     // initial distribution
   _init_distribution(&x,START_MEAN,START_STD);
@@ -90,6 +91,7 @@ int main() {
       _init_distribution(&x,START_MEAN,START_STD);
       bt.dir = x;
       p300_check(pls,bt);
+      int last_cmd = -1;  // no commands
     }
     else if(cmd >= '0' && cmd <= '9' ){
       for(int i = 0; i < MAX_P300; i++){
@@ -197,15 +199,26 @@ int main() {
     }else if(marcov_process == 2){
       if(cmd == R){
         std::cout << "Motor imagery right command" << std::endl;
+        if(last_cmd == 2){
+          bt.dir.std_dev = MI_STDDEV;
+          make_distribution(&bt.dir);
+        }
         motor_imagery_right_GMP(&bt, pls);
+        last_cmd = 1;
       }
       else if(cmd == L){
         std::cout << "Motor imagery left command" << std::endl;
+        if(last_cmd == 2){
+          bt.dir.std_dev = MI_STDDEV;
+          make_distribution(&bt.dir);
+        }
         motor_imagery_left_GMP(&bt, pls);
+        last_cmd = 1;
       }
       else if(cmd == P300){
         std::cout << "P300 command" << std::endl;
         send_p300_GMP(&bt, pls);
+        last_cmd = 2;
       }
       else if( cmd == PLAY){  
         std::cout << "Play command" << std::endl;
@@ -215,6 +228,7 @@ int main() {
         else{
           bot_move_all(&bt, pls);
         }
+        last_cmd = 0;
       }
       else
       {
@@ -513,7 +527,7 @@ void p300_check(struct player pls[MAX_P300], struct bot bt){                    
     if(dg_l > dg_p || dg_r < dg_p || distance > max_lenght){
       pls[i].p = 0;
     }
-    else if(dg_l < dg_p && dg_r > dg_p && (pls[i].p == 0 || pls[i].p != pls[i].p)){
+    else if(dg_l < dg_p && dg_r > dg_p && ( pls[i].p != pls[i].p)){
       pls[i].p = (double)1/MAX_P300;
     }
   }
@@ -789,7 +803,9 @@ void Gaus_Markov_update(double &out_mean, double &out_std,
                         double A, double C, double noise_R, double noise_Q ){
   double K_constant = 0.0;
   double sgn = 0;
+  double aus = in_mean;
   if(past_mean > in_mean){
+    in_mean = 2*past_mean-in_mean;
     sgn = -1;
   }
   else if(past_mean < in_mean){
@@ -802,15 +818,18 @@ void Gaus_Markov_update(double &out_mean, double &out_std,
   K_constant = (past_std * C)/( C * past_std * C + noise_R );
   //std::cout << "K " << K_constant << std::endl;
 
-  out_mean = past_mean + (sgn)* K_constant * ( (C * in_mean + noise_R) - C * past_mean);
+  out_mean = past_mean + K_constant * ( (C * in_mean + noise_R) - C * past_mean);
   //std::cout << "Mean " << out_mean << std::endl;
   
   out_std = past_std - (K_constant * ( C * past_std * C + noise_R) * K_constant);
   //std::cout << "STD " << out_std << std::endl;
   
-
+  if(sgn == -1){
+    out_mean = 2*past_mean - out_mean;
+  }
   out_mean = (int)out_mean % MAX_DIRECTION;
   if(out_mean < 0)out_mean = MAX_DIRECTION + out_mean;
+  
   //std::cout << "out Mean " << out_mean << std::endl;
 }
 
