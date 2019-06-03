@@ -18,6 +18,7 @@ void p300_set_fixed(struct player pls[MAX_P300], int n);
 void motor_imagery_right(struct bot *bt);
 void motor_imagery_left(struct bot *bt);
 void p300_send(player pls[MAX_P300], bot *bt);
+void p300_send_one(player pls[MAX_P300], bot *bt);
 void p300_check(struct player pls[MAX_P300], struct bot bt);
 void bot_move(struct bot *bt, struct player pls[MAX_P300]);
 void bot_move_all(struct bot *bt, struct player pls[MAX_P300]);
@@ -139,7 +140,7 @@ int main() {
         motor_imagery_left(&bt);
       }
       else if(cmd == P300){
-        p300_send(pls, &bt);
+        p300_send_one(pls, &bt);
       }
       else if( cmd == PLAY){  
         if(move == 0){
@@ -607,6 +608,40 @@ void p300_send(player pls[MAX_P300], bot *bt){           // send the p300 comman
 
     //std::cout << "[ " << i << " ] " << pls[i].pos<< " shift: " << shift << " g_p = " << g_p[i] << " p(i) = " << pls[i].p << std::endl;
   }
+  double tot = tot_distribution(bt->dir.dir);
+  mul_distribution(bt->dir.dir, 1/tot);
+}
+
+void p300_send_one(player pls[MAX_P300], bot *bt){           // send the p300 command
+  std::cout << "P300 command!" << std::endl;
+  
+  double acc = 0;
+  int max1 = (pls[0].p > pls[1].p) ? 1:0;
+  int max2 = (pls[0].p > pls[1].p) ? 0:1;
+  for(int i = 0; i < MAX_P300; i++){
+    if(pls[i].p > pls[max1].p){
+      max2 = max1;
+      max1 = i;
+    }
+    else if(pls[i].p > pls[max2].p){
+      max2 = i;
+    }
+    
+  }
+
+  mul_distribution(bt->dir.dir, P300_PAST_EFFECT);
+  
+  double ratio = 1+pls[max2].p/pls[max1].p;
+  std::cout << "RATIO : " << ratio << std::endl;
+  distribution k_dist;
+  _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*ratio); // possibility to add a coefficient whitch depends of the players distance 
+  mul_distribution(k_dist.dir, (1-P300_PAST_EFFECT));
+  int shift = calculate_degree(bt->current_pos, pls[max1].pos);
+  shift_distribution(k_dist.dir, shift);
+  sum_distribution(bt->dir.dir, k_dist.dir);
+
+  //std::cout << "[ " << i << " ] " << pls[i].pos<< " shift: " << shift << " g_p = " << g_p[i] << " p(i) = " << pls[i].p << std::endl;
+
   double tot = tot_distribution(bt->dir.dir);
   mul_distribution(bt->dir.dir, 1/tot);
 }
