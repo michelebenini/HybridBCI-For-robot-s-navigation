@@ -58,11 +58,12 @@ int main() {
   int count = 0;
   char cmd;
   int p300_switch = 0;
-  int marcov_process = 2;
+  int marcov_process = 0;
   int dis = 0;
   int move = 1;
   int help = 0;
   int last_cmd = -1;  // no commands
+  int p300_gaus = 1;
 
   distribution x;     // initial distribution
   _init_distribution(&x,START_MEAN,START_STD);
@@ -80,15 +81,19 @@ int main() {
     if(cmd == QUIT){
       break;
     }
+    else if(cmd == P300_G){
+      p300_gaus = (p300_gaus == 1) ? 0:1;
+    }
     else if(cmd == RESTART){
       std::cout << "RESTART" << std::endl;
       for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
       _init_bot(&bt);
       count = 0;
       p300_switch = 0;
-      marcov_process = 2;
+      marcov_process = 0;
       dis = 0;
       move = 1;
+      p300_gaus = 1;
       _init_distribution(&x,START_MEAN,START_STD);
       bt.dir = x;
       p300_check(pls,bt);
@@ -140,7 +145,12 @@ int main() {
         motor_imagery_left(&bt);
       }
       else if(cmd == P300){
-        p300_send_one(pls, &bt);
+        if(p300_gaus == 1){
+          p300_send_one(pls, &bt);
+        }
+        else{
+          p300_send(pls, &bt);
+        }
       }
       else if( cmd == PLAY){  
         if(move == 0){
@@ -254,6 +264,10 @@ int main() {
     }
     bt.target_direction = calc_direction(bt.dir.dir);
     dis = bt.current_direction - bt.target_direction;
+    if(move == 1){
+      bt.current_direction = bt.target_direction;
+      p300_check(pls, bt);
+    }
     std::cout << "Current direction : " << bt.current_direction << std::endl;
     std::cout << "Target direction : " << bt.target_direction << std::endl;
     std::cout << "Direction distance : " << abs(dis) << "°" << std::endl;
@@ -630,8 +644,8 @@ void p300_send_one(player pls[MAX_P300], bot *bt){           // send the p300 co
   }
 
   mul_distribution(bt->dir.dir, P300_PAST_EFFECT);
-  
-  double ratio = 1+pls[max2].p/pls[max1].p;
+  int k = 2;
+  double ratio = 1+exp(k*pls[max2].p/pls[max1].p);
   std::cout << "RATIO : " << ratio << std::endl;
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*ratio); // possibility to add a coefficient whitch depends of the players distance 

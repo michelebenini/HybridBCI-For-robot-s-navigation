@@ -16,7 +16,7 @@
 #define START_MEAN 180
 #define START_STD 180
 #define FIXED_P300 0.7                                    // probability of selected player in p300
-#define P300_STDDEV 25.0                                  // standard deviation of gaussian for p300 commands
+#define P300_STDDEV 5.0                                  // standard deviation of gaussian for p300 commands
 #define MI_STDDEV 50.0                                    // standard deviation of gaussian for motor imagery commands
 #define STAY_STDDEV 100.0                                 // standard deviation of gaussian to go straight
 #define MOVE_STDDEV 10
@@ -56,6 +56,7 @@
 #define RESTART 'r'
 #define MP_SWITCH 'c'
 #define MV_SWITCH 'p'
+#define P300_G 'o'
 
 struct distribution                                       // struct represent normal distribution
 {
