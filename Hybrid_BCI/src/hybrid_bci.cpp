@@ -73,7 +73,7 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
   int people = ((int)msg->tot_people);
   struct player pls[people];
   for(int i = 0; i < people; i++){
-    //ROS_INFO("\t[ %d ] ( %d - %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].x,(int)msg->person[i].y,(double)msg->person[i].p);
+    ROS_INFO("\t[ %d ] ( %d - %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].x,(int)msg->person[i].y,(double)msg->person[i].p);
     pls[i].id = (int)msg->person[i].id;
     pls[i].pos = cv::Point2d((int)msg->person[i].x,(int)msg->person[i].y);
     pls[i].p = (double)msg->person[i].p;
@@ -236,7 +236,7 @@ void bot::odomCallback(const nav_msgs::Odometry::ConstPtr &msg){
   if(target_direction == -1){
     target_direction = current_direction;
     _init_distribution(&dir,180,180, 360);
-    shift_distribution( dir.dir, current_direction, 360);
+    shift_distribution( dir.dir, target_direction, 360);
   }
 }
 
@@ -346,8 +346,10 @@ int calculate_degree(cv::Point2d bt, cv::Point2d elem, int n){                  
   double cosin = dp / norm;
   double res = acos(cosin) * (180.0 / M_PI);
   
-  if(elem.x > 0)res = 360-(res+180);
-  if(elem.x < 0)res = res+180;
+  if(elem.x > 0)res = res;
+  if(elem.x < 0)res = -res;
+  //if(elem.y > 0)res = -res;
+  //if(elem.y < 0)res = res;
   
   res = res*n/360;
   int result = (((int)res)%360);

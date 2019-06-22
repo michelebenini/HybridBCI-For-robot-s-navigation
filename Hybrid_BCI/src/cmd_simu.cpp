@@ -114,10 +114,10 @@ char getch()
 
 void _init_player(struct player *pl, int n){
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
-  int x = (int)((n+1)*MAP_COLS/(config.max_p300+1));
-  int y = (int)(0.9 * MAP_ROWS);
+  double x = 1.4;
+  double y = -1;
   pl->name = (char)n;
-  pl->pos = cv::Point(x,y);
+  pl->pos = cv::Point2d(x,y);
   pl->p = (double)1/config.max_p300;
   pl->size = 50;
   pl->color =  cv::Scalar(0,0,255);
