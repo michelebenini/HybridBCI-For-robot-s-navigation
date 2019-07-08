@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/michele/catkin_ws/src/hybrid_bci/build/devel/setup.sh

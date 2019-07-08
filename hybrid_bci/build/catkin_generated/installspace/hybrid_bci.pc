@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: hybrid_bci
+Description: Description of hybrid_bci
+Version: 0.0.0
+Cflags: -I/usr/local/include
+Libs: -L/usr/local/lib -lhybrid_bci
+Requires: dynamic_reconfigure roscpp rospy cv_bridge image_transport sensor_msgs std_msgs

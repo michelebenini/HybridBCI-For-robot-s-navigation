@@ -1,0 +1,8 @@
+prefix=/home/michele/catkin_ws/src/hybrid_bci/build/devel
+
+Name: hybrid_bci
+Description: Description of hybrid_bci
+Version: 0.0.0
+Cflags: -I/home/michele/catkin_ws/src/hybrid_bci/build/devel/include -I/home/michele/catkin_ws/src/hybrid_bci/include
+Libs: -L/home/michele/catkin_ws/src/hybrid_bci/build/devel/lib -lhybrid_bci
+Requires: dynamic_reconfigure roscpp rospy cv_bridge image_transport sensor_msgs std_msgs
