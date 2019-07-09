@@ -24,7 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(OpenCV REQUIRED)
 
 
-message(STATUS "OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
+message(STATUS "OpennCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
 message(STATUS "OpenCV_LIBS = ${OpenCV_LIBRARIES}") 
 
 ## System dependencies are found with CMake's conventions
@@ -124,10 +124,10 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include 
-  LIBRARIES hybrid_bci  
+  #INCLUDE_DIRS include 
+  #LIBRARIES hybrid_bci  
   CATKIN_DEPENDS dynamic_reconfigure roscpp rospy cv_bridge image_transport sensor_msgs std_msgs 
-  DEPENDS OpenCV2
+  #DEPENDS OpenCV
 )
 
 ###########

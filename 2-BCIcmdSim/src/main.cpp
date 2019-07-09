@@ -85,7 +85,7 @@ int main() {
       p300_gaus = (p300_gaus == 1) ? 0:1;
     }
     else if(cmd == RESTART){
-      std::cout << "RESTART" << std::endl;
+      std::cout << "RESTART!" << std::endl;
       for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
       _init_bot(&bt);
       count = 0;

@@ -271,7 +271,7 @@ int main(int argc, char **argv){
   int target_dir = bt.target_direction;
   while(ros::ok){
     hybrid_bci::direction_distribution msg;
-    if(target_dir != bt.target_direction ){
+    if(target_dir != bt.target_direction || bt.target_direction == -1){
       count = 1;
       target_dir = bt.target_direction;
     }

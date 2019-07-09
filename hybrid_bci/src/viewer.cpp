@@ -3,6 +3,7 @@
 
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include "sensor_msgs/Image.h"
 #include "sensor_msgs/image_encodings.h"

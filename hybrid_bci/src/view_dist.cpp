@@ -2,6 +2,7 @@
 #include "hybrid_bci/direction_distribution.h"
 
 #include <image_transport/image_transport.h>
+#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
 
@@ -27,7 +28,7 @@ class bot                                                // struct represent the
     
 };
 void bot::showCallback(const hybrid_bci::direction_distribution::ConstPtr& msg){
-    ROS_INFO("Callback");
+    ROS_INFO("Callback show");
     img = cv::Mat(cv::Size(800, 800), CV_8UC3, cv::Scalar(255,255,255));
     for(int i = 0; i < 360; i++){
         dir.dir[i] = msg->directions[i];
