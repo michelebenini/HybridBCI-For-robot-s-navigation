@@ -42,7 +42,10 @@ message(STATUS "OpenCV_LIBS = ${OpenCV_LIBRARIES}")
 add_message_files(DIRECTORY msg FILES P300.msg)
 add_message_files(DIRECTORY msg FILES P300_person.msg)
 add_message_files(DIRECTORY msg FILES motorimagery.msg)
+add_message_files(DIRECTORY msg FILES motorimagery_raw.msg)
 add_message_files(DIRECTORY msg FILES direction_distribution.msg)
+add_message_files(DIRECTORY msg FILES P300_roi.msg)
+add_message_files(DIRECTORY msg FILES person_roi.msg)
 #add_service_files(DIRECTORY srv FILES AddTwoInts.srv)
 
 ## To declare and build messages, services or actions from within this
@@ -71,6 +74,9 @@ add_message_files(
    P300.msg
    P300_person.msg
    motorimagery.msg
+   motorimagery_raw.msg
+   P300_roi.msg
+   person_roi.msg
    direction_distribution.msg
  )
 
@@ -226,6 +232,8 @@ add_executable(hybrid_bci src/hybrid_bci.cpp)
 add_executable(viewer src/viewer.cpp)
 add_executable(move src/move_bci.cpp)
 add_executable(view_dist src/view_dist.cpp)
+add_executable(p300_handler src/p300_handler.cpp)
+add_executable(mi_handler src/mi_handler.cpp)
 
 target_link_libraries(cmd_simu 
   ${OpenCV_LIBS} 
@@ -246,9 +254,19 @@ target_link_libraries(view_dist
   ${catkin_LIBRARIES} 
   ${OpenCV_LIBS} 
 )
+target_link_libraries(p300_handler 
+  ${catkin_LIBRARIES} 
+  ${OpenCV_LIBS} 
+)
+target_link_libraries(mi_handler 
+  ${catkin_LIBRARIES} 
+  ${OpenCV_LIBS} 
+)
 
 add_dependencies(cmd_simu hybrid_bci_generate_messages_cpp)
 add_dependencies(hybrid_bci hybrid_bci_generate_messages_cpp)
 add_dependencies(viewer hybrid_bci_generate_messages_cpp)
 add_dependencies(move hybrid_bci_generate_messages_cpp)
 add_dependencies(view_dist hybrid_bci_generate_messages_cpp)
+add_dependencies(p300_handler hybrid_bci_generate_messages_cpp)
+add_dependencies(mi_handler hybrid_bci_generate_messages_cpp)
