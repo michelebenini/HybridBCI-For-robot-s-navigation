@@ -1,0 +1,8 @@
+uint8 SUCCESS = 0
+uint8 FACE_NOT_DETECTED = 1
+uint8 FEATURE_NOT_EXTRACTED = 2
+
+std_msgs/String name
+sensor_msgs/Image image
+---
+uint8 result

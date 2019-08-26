@@ -31,19 +31,29 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "cmd_simu");
   ros::NodeHandle n;
+  hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
+  std::cout << "----------COMMANDS!----------"<< std::endl;
+  std::cout << "[p] Play"<< std::endl;
+  std::cout << "[q] Quit"<< std::endl;
+  std::cout << "[a] Motor imagery left of "<< config.mi_degree << " degree" <<std::endl;
+  std::cout << "[d] Motor imagery right of "<< config.mi_degree << " degree" <<std::endl;
+  std::cout << "[s] Send p300 from [1, 2, 3, 4] each one differs from the previus one of"<< config.max_direction/8 << " degree" <<std::endl;
+  std::cout << "[1, 2, 3, 4] Set the p300 target"<< config.max_direction/8 << " degree" <<std::endl;
+  std::cout << "-------------END!-----------"<< std::endl;
+  
   ros::Publisher mi_pub = n.advertise<hybrid_bci::motorimagery>("motorimagery", 1000);
   ros::Publisher p300_pub = n.advertise<hybrid_bci::P300>("p300", 1000);
   ros::Rate loop_rate(10);
-  hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
+  
   
   int count_mi = 0;
   int count_p300 = 0;
-  ROS_INFO("-- %d -- ",config.max_p300);
+  //ROS_INFO("-- %d -- ",config.max_p300);
   int max_p300 = config.max_p300;
   player pls[max_p300];
   for(int i = 0; i < max_p300; i++){
     _init_player(&pls[i],i);
-    ROS_INFO("PERSON %d - %lf", i ,pls[i].p);
+    //ROS_INFO("PERSON %d - %lf", i ,pls[i].p);
   }
 
   while (ros::ok())

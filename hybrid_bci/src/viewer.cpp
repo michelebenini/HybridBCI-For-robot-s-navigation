@@ -61,7 +61,7 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
   {
     cv::Mat cam = cv_bridge::toCvShare(msg, "bgr8")->image;
     int bar_rows = 50;
-    int start_rows = 50;
+    int start_rows = 0;
     img = cv::Mat(cam.rows+bar_rows+start_rows, cam.cols, CV_8UC3);
     
     int lf_start = (1-mi_left)*(cam.cols/2 - 2);
@@ -115,8 +115,8 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
       roi.setTo(cv::Scalar(0, 255, 0));
     }
 
-    sprintf(str,"START/STOP");
-    putText(img, str, cv::Point((img.cols/2)-70,35), cv::FONT_HERSHEY_DUPLEX, 1,  cv::Scalar(0,0,0), 2, cv::LINE_AA);
+    //sprintf(str,"START/STOP");
+    //putText(img, str, cv::Point((img.cols/2)-70,35), cv::FONT_HERSHEY_DUPLEX, 1,  cv::Scalar(0,0,0), 2, cv::LINE_AA);
     
     if(full_screen)cv::setWindowProperty("Viewer", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN); // FULL SCREEN
     

@@ -72,7 +72,9 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
 {
   //ROS_INFO("[ %d ] P300 command!", ((int)msg->pkg_id));
   //ROS_INFO("START DIRECTION : %d",this->current_direction);
+  hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   int people = ((int)msg->tot_people);
+  int max_direction = config.max_direction;
   ROS_INFO("People %d", people);
   if(people == -1 && enable_moves == 1){
     enable_moves = -1;
@@ -86,6 +88,7 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
       ROS_INFO("\t[ %d ] ( %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].dir,(double)msg->person[i].p);
       pls[i].id = (int)msg->person[i].id;
       pls[i].dir = msg->person[i].dir;
+      pls[i].dir = (pls[i].dir+current_direction)%max_direction;
       pls[i].p = (double)msg->person[i].p;
     }
     p300_send_one(pls,people);
@@ -117,6 +120,7 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
     
   }
   //ROS_INFO("MAX1 %lf MAX2 %lf ", pls[max1].p, pls[max2].p);
+  
   mul_distribution(dir.dir, p300_past_effect, max_direction);
   //ROS_INFO("Scaled distribution %lf ",tot_distribution(dir.dir, max_direction));
     
