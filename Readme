@@ -1,3 +1,5 @@
+The first two directory are simulators. The others are the actual programs.
+
 To use you must have in your ros enviroment:
 - cnbiros_bci
 - cnbiros_tobi_msgs
