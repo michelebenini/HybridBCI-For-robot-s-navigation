@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<wtkprotocol>
+	<subject>D10</subject>
+	<date>14.12.2017</date>
+	<taskset>
+		<mi_both_hands id ="0" type="smr">
+			<trials>15</trials>
+			<threshold>0.7</threshold>
+			<command>0</command>
+		</mi_both_hands>
+		
+		<mi_both_feet id="1" type="smr">
+			<trials>15</trials>
+			<threshold>0.6</threshold>
+			<command>1</command>
+		</mi_both_feet>
+	</taskset>
+
+	<classifiers>
+		<smr>classifier_bhbf.dat</smr>
+	</classifiers>
+
+	<integration>0.97</integration>
+	<rejection>0.55</rejection>
+	
+	<timings>
+		<begin>3000</begin>
+		<fixation>3000</fixation>
+		<cue>1000</cue>
+		<iti>1000</iti>
+		<feedback-min>4000</feedback-min>
+		<feedback-max>5500</feedback-max>
+		<feedback-update>100</feedback-update>
+		<boom>1000</boom>
+		<end>3000</end>
+	</timings>
+</wtkprotocol>

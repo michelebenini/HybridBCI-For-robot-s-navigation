@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<wtkprotocol>
+	<subject>a1</subject>
+	<date>2019.03.04</date>
+	<taskset>
+		<p300_task1 id ="0" type="p300">
+			<trials>2</trials>
+			<command>0</command>
+		</p300_task1>
+
+		<p300_task2 id ="1" type="p300">
+			<trials>2</trials>
+			<command>1</command>
+		</p300_task2>
+		
+		<p300_task3 id ="2" type="p300">
+			<trials>2</trials>
+			<command>2</command>
+		</p300_task3>
+
+		<p300_task4 id ="3" type="p300">
+			<trials>2</trials>
+			<command>3</command>
+		</p300_taskt4>
+	</taskset>
+
+	<classifiers>
+		<p300>test/a1_20190306_BLDA.p300.dat</p300>
+	</classifiers>
+	<parameters>
+		<threshold>0.7</threshold>
+	</parameters>
+	
+	<timings>
+		<begin>3000</begin>
+		<cue>2000</cue>
+		<iti>200</iti>
+		<flash>150</flash>
+		<interflash>750</interflash>
+		<numrepetition-min>5</numrepetition-min>
+		<numrepetition-max>7</numrepetition-max>
+		<boom>1000</boom> 
+		<rest>1000</rest>
+		<end>3000</end>
+	</timings>
+</wtkprotocol>

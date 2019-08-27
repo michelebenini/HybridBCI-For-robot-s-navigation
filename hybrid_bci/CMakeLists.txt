@@ -96,7 +96,6 @@ include_directories(
 
 add_executable(cmd_simu src/cmd_simu.cpp)
 add_executable(hybrid_bci src/hybrid_bci.cpp)
-add_executable(viewer src/viewer.cpp)
 add_executable(move src/move_bci.cpp)
 add_executable(view_dist src/view_dist.cpp)
 add_executable(p300_handler src/p300_handler.cpp)
@@ -109,10 +108,7 @@ target_link_libraries(hybrid_bci
   ${catkin_LIBRARIES} 
   ${OpenCV_LIBS} 
   )
-target_link_libraries(viewer 
-  ${catkin_LIBRARIES} 
-  ${OpenCV_LIBS} 
-)
+
 target_link_libraries(move 
   ${catkin_LIBRARIES} 
   ${OpenCV_LIBS} 
@@ -139,7 +135,6 @@ target_link_libraries(mi_handler
 
 add_dependencies(cmd_simu hybrid_bci_generate_messages_cpp)
 add_dependencies(hybrid_bci hybrid_bci_generate_messages_cpp)
-add_dependencies(viewer hybrid_bci_generate_messages_cpp)
 add_dependencies(move hybrid_bci_generate_messages_cpp)
 add_dependencies(view_dist hybrid_bci_generate_messages_cpp)
 add_dependencies(p300_handler hybrid_bci_generate_messages_cpp)

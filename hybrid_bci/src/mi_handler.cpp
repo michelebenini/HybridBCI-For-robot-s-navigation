@@ -1,18 +1,19 @@
 #include "ros/ros.h"
 #include "iostream"
+#include <thread>         // std::thread
+#include <mutex>          // std::mutex
 
 #include <image_transport/image_transport.h>
-#include <hybrid_bci/motorimagery_raw.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include <cv_bridge/cv_bridge.h>
-#include "sensor_msgs/Image.h"
-#include "sensor_msgs/image_encodings.h"
-#include "hybrid_bci/P300_roi.h"
-#include "hybrid_bci/person_roi.h"
+#include "hybrid_bci/motorimagery.h"
 
 
-//#include "cnbiros_bci/TidInterface.hpp"
+#include "cnbiros_tobi_msgs/TicMessage.h"
+#include "cnbiros_tobi_msgs/TicClassifier.h"
+#include "cnbiros_tobi_msgs/TicClass.h"
+#include <hybrid_bci/ParametersConfig.h>
 
 class view{
   public:
@@ -20,29 +21,82 @@ class view{
     double mi_left;
     double mi_right;
     int start;
+    int count_mi;
     cv::Mat img;
-    void mi_rawCallback(const hybrid_bci::motorimagery_raw::ConstPtr& msg);
+    ros::Publisher pubcmd;
+
+    void cnbCallback(const cnbiros_tobi_msgs::TicMessage::ConstPtr& msg);
     void image();
 };
 
+std::mutex mtx_bars;
 
 
-void view::mi_rawCallback(const hybrid_bci::motorimagery_raw::ConstPtr& msg){
-  mi_left = msg->left;
-  mi_right = msg->right;
+void view::cnbCallback(const cnbiros_tobi_msgs::TicMessage::ConstPtr& msg){
+  ROS_INFO("SMR callback");
+  hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
+  
+  double left = -1;
+  double right = -1;
+
+  std::string label0 = msg->classifiers[0].classes[0].label;
+  std::string label1 = msg->classifiers[0].classes[1].label;
+  
+  if(label0.compare(config.mi_cmd_left) == 0 && label1.compare(config.mi_cmd_right) == 0){
+    left = msg->classifiers[0].classes[0].value;
+    right = msg->classifiers[0].classes[1].value;
+  }
+  else if(label1.compare(config.mi_cmd_left) == 0 && label0.compare(config.mi_cmd_right) == 0){
+    right = msg->classifiers[0].classes[0].value;
+    left = msg->classifiers[0].classes[1].value;
+  }
+  else{
+    ROS_INFO("ERROR in motor imagery command");
+    return;
+  }
+
+  while(!mtx_bars.try_lock());
+    mi_left = mi_left + left;
+    mi_right = mi_right + right;
+    double sum = mi_left+mi_right;
+    mi_left = mi_left/sum;
+    mi_right = mi_right/sum;
+  mtx_bars.unlock();
+
+  ROS_INFO("Right command: %lf", mi_right);
+  ROS_INFO("Left command: %lf", mi_left);
+
+  if(mi_left > config.mi_threshold){
+    ROS_INFO("Send Left command!");
+    hybrid_bci::motorimagery msg;
+      msg.pkg_id = count_mi;
+      msg.dir = true;
+      pubcmd.publish(msg);
+      count_mi++;
+  }
+  else if(mi_right > config.mi_threshold){
+    ROS_INFO("Send Right command!");
+    hybrid_bci::motorimagery msg;
+      msg.pkg_id = count_mi;
+      msg.dir = true;
+      pubcmd.publish(msg);
+      count_mi++;
+  }
+
 }
 
 void view::image(){
   char str[200];
 
   int bar_rows = 50;
-  int start_rows = 0;
   img = cv::Mat(bar_rows, 500, CV_8UC3);
   
-  int lf_start = (1-mi_left)*(img.cols/2 - 2);
-  int rg_end = img.cols/2 + 2 + mi_right*(img.cols/2 - 2);
-  int bar = (img.cols)/20;
-  
+  while(!mtx_bars.try_lock());
+    int lf_start = (1-mi_left)*(img.cols/2 - 2);
+    int rg_end = img.cols/2 + 2 + mi_right*(img.cols/2 - 2);
+    int bar = (img.cols)/20;
+  mtx_bars.unlock();
+
   for(int i = 0; i < img.rows; i++){
     for(int j = 0; j < img.cols; j++){
       
@@ -83,11 +137,12 @@ int main(int argc, char **argv){
     v.full_screen = 0;
     v.mi_left = 0;
     v.mi_right = 0;
+    v.count_mi = 0;
 
 
     cv::namedWindow("Bars", CV_WINDOW_NORMAL);
-    
-    ros::Subscriber mi_sub = n.subscribe("mi_raw",1, &view::mi_rawCallback, &v);
+    v.pubcmd = n.advertise<hybrid_bci::motorimagery>("motorimagery", 10000);
+    ros::Subscriber mi_sub = n.subscribe("rostic_cnbi2ros",1, &view::cnbCallback, &v);
     ros::Rate loop_rate(1);
 
     while(ros::ok){
