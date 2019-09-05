@@ -77,10 +77,14 @@ void write_log(char* msg){
   
   auto tm = std::chrono::system_clock::now();
   std::time_t t = std::chrono::system_clock::to_time_t(tm);
+  std::tm * ptm = std::localtime(&t);
+  char buffer[32];
+  // Format: Mo, 15.06.2009 20:20:00
+  std::strftime(buffer, 32, "%a, %d.%m.%Y %H:%M:%S", ptm); 
   //std::cout << "Writing "<< log_filename <<": "<< msg << std::endl;
   while(!mtx.try_lock()) {};
       f = fopen(log_filename, "a");
-      fprintf(f, "[%ld] %s\n",t, msg);
+      fprintf(f, "[%s] %s\n",buffer, msg);
       fclose(f);
   mtx.unlock();
 }
@@ -138,7 +142,7 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
     
   }
   char* log_msg = (char*)calloc(2000, sizeof(char));
-  sprintf(log_msg,"P300 command:\n\tMax probability: %f\n\tSecond probability: %f\n\tDirection offset: %d\n\fCurrent direction: %d",pls[max1].p, pls[max2].p, pls[max1].dir, current_direction);
+  sprintf(log_msg,"P300 command:\n\tMax probability: %f\n\tSecond probability: %f\n\tDirection offset: %d\n\tCurrent direction: %d",pls[max1].p, pls[max2].p, pls[max1].dir, current_direction);
   std::thread log_th (write_log, log_msg);
   //ROS_INFO("MAX1 %lf MAX2 %lf ", pls[max1].p, pls[max2].p);
   
