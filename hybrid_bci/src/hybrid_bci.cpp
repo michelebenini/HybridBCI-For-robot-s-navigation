@@ -12,16 +12,20 @@
 #include "tf/tfMessage.h"
 #include "angles/angles.h"
 #include "std_msgs/Float64MultiArray.h"
-
+#include <thread>         // std::thread
+#include <mutex>          // std::mutex
 #include "iostream"
-
+#include <ros/package.h>
 #include <image_transport/image_transport.h>
 #include <opencv2/highgui/highgui.hpp>
 #include <cv_bridge/cv_bridge.h>
-
+#include <fstream>
 
 
 #include <hybrid_bci/ParametersConfig.h>
+
+char* log_filename;
+std::mutex mtx;
 
 struct distribution                                       // struct represent normal distribution
 {
@@ -68,6 +72,19 @@ cv::Point2d calculate_point(cv::Point2d bt, int dg, double dist);
 void confirm_move(bot *bt);
 hybrid_bci::direction_distribution bot_move( bot *bt);
 
+void write_log(char* msg){
+  FILE * f;
+  
+  auto tm = std::chrono::system_clock::now();
+  std::time_t t = std::chrono::system_clock::to_time_t(tm);
+  //std::cout << "Writing "<< log_filename <<": "<< msg << std::endl;
+  while(!mtx.try_lock()) {};
+      f = fopen(log_filename, "a");
+      fprintf(f, "[%ld] %s\n",t, msg);
+      fclose(f);
+  mtx.unlock();
+}
+
 void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
 {
   //ROS_INFO("[ %d ] P300 command!", ((int)msg->pkg_id));
@@ -98,6 +115,7 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
 
 void bot::p300_send_one(player *pls,int n){           // send the p300 command
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
+  
   int max_direction = config.max_direction;
   //ROS_INFO("max_direction %d",max_direction);
   double p300_past_effect = config.p300_past_effect;
@@ -119,6 +137,9 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
     }
     
   }
+  char* log_msg = (char*)calloc(2000, sizeof(char));
+  sprintf(log_msg,"P300 command:\n\tMax probability: %f\n\tSecond probability: %f\n\tDirection offset: %d\n\fCurrent direction: %d",pls[max1].p, pls[max2].p, pls[max1].dir, current_direction);
+  std::thread log_th (write_log, log_msg);
   //ROS_INFO("MAX1 %lf MAX2 %lf ", pls[max1].p, pls[max2].p);
   
   mul_distribution(dir.dir, p300_past_effect, max_direction);
@@ -143,6 +164,7 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
   this->target_direction = calc_direction(dir.dir, max_direction);
   //ROS_INFO("CURRENT DIR : %d ", this->target_direction);
   free(k_dist.dir);
+  log_th.join();
 }
 
 void bot::motorimageryCallback(const hybrid_bci::motorimagery::ConstPtr& msg)
@@ -170,6 +192,10 @@ void bot::motorimageryCallback(const hybrid_bci::motorimagery::ConstPtr& msg)
 
 void bot::motor_imagery_right(){                                          // send motor imagery right command
   //std::cout << "Right command!" << std::endl;
+  char* log_msg = (char*)calloc(1000, sizeof(char));
+  sprintf(log_msg, "Motor Imagery Right command\n\tShift: +45\n\tCurrent direction: %d",current_direction);
+  std::thread log_th (write_log, log_msg);
+
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   int max_direction = config.max_direction;
   double mi_stddev = config.mi_stddev;
@@ -200,9 +226,14 @@ void bot::motor_imagery_right(){                                          // sen
   this->target_direction = calc_direction(dir.dir, max_direction);
   free(mi.dir);
   free(k_dist.dir);
+  log_th.join();
 }
 
 void bot::motor_imagery_left(){                                          // send motor imagery left command
+  char* log_msg = (char*)calloc(1000, sizeof(char));
+  sprintf(log_msg ,"Motor Imagery Left command\n\tShift: -45\n\tCurrent direction: %d",current_direction);
+  std::thread log_th (write_log, log_msg);
+  
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   int max_direction = config.max_direction;
   double mi_stddev = config.mi_stddev;
@@ -233,6 +264,7 @@ void bot::motor_imagery_left(){                                          // send
   this->target_direction = calc_direction(dir.dir, max_direction);
   free(mi.dir);
   free(k_dist.dir);
+  log_th.join();
 }
 
 void bot::odomCallback(const nav_msgs::Odometry::ConstPtr &msg){
@@ -253,10 +285,19 @@ void bot::odomCallback(const nav_msgs::Odometry::ConstPtr &msg){
 }
 
 int main(int argc, char **argv){
+  std::cout<< "Hybrid BCI node starts!!" << std::endl;
   ros::init(argc, argv, "listener");
   ros::NodeHandle n;
   ros::Publisher pub = n.advertise<hybrid_bci::direction_distribution>("move", 10000);
   bot bt;
+  auto start_t = std::chrono::system_clock::now();
+  std::time_t start_time = std::chrono::system_clock::to_time_t(start_t);
+  log_filename = (char*)calloc(100, sizeof(char));
+  sprintf(log_filename,"%s/Logs/%ld.log", ros::package::getPath("hybrid_bci").c_str(),start_time);
+  char* log_msg = (char*)calloc(1000, sizeof(char));
+  sprintf(log_msg, "Start!");
+  std::thread log_th (write_log, log_msg);
+  //std::cout<< log_filename << std::endl;
 
   bt.current_pos = cv::Point2d(0,0);
   bt.target_direction = -1;
@@ -415,6 +456,10 @@ cv::Point2d calculate_point(cv::Point2d bt, int dg, double dist){               
 
 void confirm_move(bot *bt){
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
+  char* log_msg = (char*)calloc(500, sizeof(char));
+  sprintf(log_msg, "No-Commands\n\tDirection confirmed");
+  std::thread log_th (write_log, log_msg);
+
   int max_direction = config.max_direction;
   double move_effect = config.move_effect;
   int move_stddev = config.move_stddev;
@@ -446,6 +491,7 @@ void confirm_move(bot *bt){
   double tot = tot_distribution(bt->dir.dir, max_direction);
   mul_distribution(bt->dir.dir, 1/tot, max_direction);
   free(move.dir);
+  log_th.join();
 
 }
 

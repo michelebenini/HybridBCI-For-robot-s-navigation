@@ -1,5 +1,3 @@
-The first two directory are simulators. The others are the actual programs.
-
 To use you must have in your ros enviroment:
 - cnbiros_bci
 - cnbiros_tobi_msgs
@@ -29,13 +27,13 @@ catkin_make
 cd ~/workspace/whitoolkit/data/test
 cl_runloop -d test.gdf -r
 
-roslaunch cnbiros_bci roshybrid.launch
+roslaunch hybrid_bci roshybrid.launch
 
 hybrid_p300_protocol -x hybrid_p300_protocol.xml
 hybrid_smr_protocol -x hybrid_smr_protocol.xml
 
 ////////////// For test with simulator///////////////
-roslaunch turtlebot_gazebo turtlebot_world.launch 
+roslaunch hybrid_bci simulation_world.launch
 //////////////////////////////////////////////////////
 
 rosrun open_face_recognition open_face_recognition_node.py
@@ -51,6 +49,6 @@ PRESS p on cmd_simu to start moving the robot
 TO SEE THE CURRENT DIRECTION DISTRIBUTION DIGIT:
 rosrun hybrid_bci view_dist
 
-
+The start script make start all the programs, exept for the handlers.
 
 

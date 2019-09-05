@@ -90,7 +90,10 @@ int main(int argc, char **argv)
       for(int i = 0; i < max_p300; i++){
         hybrid_bci::P300_person p1;
         p1.id = i;
-        p1.dir = 45*i;
+        p1.dir = (45*i)-(config.max_direction/4);
+        if(p1.dir >= 0){
+          p1.dir = p1.dir + 45;
+        }
         p1.p = pls[i].p;
         msg.person.push_back(p1);
       }

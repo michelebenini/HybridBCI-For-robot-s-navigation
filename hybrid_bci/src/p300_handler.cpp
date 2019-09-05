@@ -61,8 +61,8 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
     ///////////////////////////////////////////////////////////// TEST    ///////////////////////////////////////////
     cv::Mat current;
     while(!mtx_img.try_lock()){}
-      img = cv::imread("/home/michele/catkin_ws/src/hybrid_bci/data/all.png");
-      //img = cv_bridge::toCvShare(msg, "bgr8")->image;
+      //img = cv::imread("/home/michele/catkin_ws/src/hybrid_bci/data/all.png");
+      img = cv_bridge::toCvShare(msg, "bgr8")->image;
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       current = img.clone();
       mtx_img.unlock();
@@ -86,7 +86,7 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
           roi.setTo(cv::Scalar(0, 255, 0));
         }
         else{
-          cv::rectangle(current, rect, cv::Scalar(0, 0, 0));
+          cv::rectangle(current, rect, cv::Scalar(0, 0, 0),2);
         }
       }
       mtx_pls.unlock();

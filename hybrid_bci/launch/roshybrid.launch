@@ -16,7 +16,7 @@
          reconnect: 5.0
         </rosparam>
 	</node>
-	<node pkg="cnbiros_bci" type="rostic" name="rostic_get" output="screen">
+	<node pkg="cnbiros_bci" type="rostic" name="rostic_get_p300" output="screen">
        <rosparam>
          loopip: 127.0.0.1:8123
          pipe: /ctrl0
@@ -24,4 +24,14 @@
          reconnect: 5.0
        </rosparam>
 	</node>
+
+  <node pkg="cnbiros_bci" type="rostic" name="rostic_get_smr" output="screen">
+       <rosparam>
+         loopip: 127.0.0.1:8123
+         pipe: /ctrl1
+         mode: GetOnly
+         reconnect: 5.0
+       </rosparam>
+  </node>
+
 </launch>
