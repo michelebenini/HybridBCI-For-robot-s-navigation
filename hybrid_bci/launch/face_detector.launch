@@ -1,0 +1,7 @@
+<launch>
+    <node pkg="open_face_recognition" type="open_face_recognition_node.py" name="open_face" output="screen">
+    </node>
+    <node pkg="face_classification" type="face_classification_node.py" name="face_classification" output="screen">
+    </node>
+    
+</launch>

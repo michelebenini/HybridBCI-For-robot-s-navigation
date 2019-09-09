@@ -51,6 +51,9 @@ void bot::distCallback(const hybrid_bci::direction_distribution::ConstPtr& msg)
   else{
     enable_moves = 1;
   } 
+  if(target_direction == -2){
+    exit(0);
+  }
 }
 
 geometry_msgs::Twist bot_move(bot *bt);
@@ -65,7 +68,7 @@ int main(int argc, char **argv){
   ros::Subscriber dist_sub = n.subscribe("move", 1, &bot::distCallback, &bt);
   ros::Subscriber od_sub = n.subscribe("odom",1, &bot::odomCallback, &bt);
   
-  ros::Rate loop_rate(1);
+  ros::Rate loop_rate(50);
   
   while(ros::ok){
     geometry_msgs::Twist msg;
@@ -84,20 +87,18 @@ geometry_msgs::Twist bot_move(bot *bt){
   
   
   if(bt->enable_moves == 1){
-    int range = 20;
+    int range = 10;
     int dif = bt->current_direction - bt->target_direction;
     if(dif < 0) dif = dif + 360;
     if(dif > 359) dif = dif - 360;
     if(dif < range){
       ROS_INFO("Robot Moves straight");
-      msg.linear.x = 0.4;
+      msg.linear.x = 0.2;
       msg.linear.y = 0;
       msg.linear.z = 0;
       msg.angular.x = 0;
       msg.angular.y = 0;
       msg.angular.z = 0;
-
-
     }
     else{
       
@@ -109,10 +110,10 @@ geometry_msgs::Twist bot_move(bot *bt){
       msg.angular.x = 0;
       msg.angular.y = 0;
       if((dif >= - 360/2) && (dif < 0 || dif >= 360/2)){
-        msg.angular.z = 0.3;
+        msg.angular.z = 0.1;
       }
       else if((dif <= 360/2) && (dif > 0 || dif <= -360/2)){
-        msg.angular.z = -0.3;
+        msg.angular.z = -0.1;
       }
       else{
         msg.angular.z = 0;

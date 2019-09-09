@@ -48,6 +48,8 @@ double make_distribution(struct distribution *d);
 void Gaus_Markov_predict(double &out_mean, double &out_std, double past_mean, double past_std, double A, double noise_Q );
 void Gaus_Markov_update(double &out_mean, double &out_std, double past_mean, double past_std, double in_mean, double A, double C, double noise_R, double noise_Q );
 
+char* log_filename;
+
 int main() {
   player pls[MAX_P300];
   for(int i = 0; i < MAX_P300; i++){_init_player(&pls[i],i);}
@@ -64,6 +66,11 @@ int main() {
   int help = 0;
   int last_cmd = -1;  // no commands
   int p300_gaus = 1;
+
+  auto start_t = std::chrono::system_clock::now();
+  std::time_t start_time = std::chrono::system_clock::to_time_t(start_t);
+  log_filename = (char*)calloc(100, sizeof(char));
+  sprintf(log_filename,"logs/%ld.log", start_time);
 
   distribution x;     // initial distribution
   _init_distribution(&x,START_MEAN,START_STD);
@@ -375,8 +382,39 @@ double normal_distribution_calc(int n, double mean, double std_dev){
   double res = (1/sqrt(2*M_PI*std_dev*std_dev))*exp(-(n-mean)*(n-mean)/(2*std_dev*std_dev));
   return res;
 }
+void write_log(struct bot bt){
+  //std::cout << "Writing Log : "<< log_filename << std::endl;
+  FILE * f;
+  std::ostringstream strs;
+  for(int i = 0; i< MAX_DIRECTION ; i++){
+    strs << bt.dir.dir[i] << ";";
+  }
+  
+  std::string str = strs.str();
 
+  auto tm = std::chrono::system_clock::now();
+  std::time_t t = std::chrono::system_clock::to_time_t(tm);
+  std::tm * ptm = std::localtime(&t);
+  char buffer[32];
+  // Format: Mo, 15.06.2009 20:20:00
+  std::strftime(buffer, 32, "%a, %d.%m.%Y %H:%M:%S", ptm); 
+  //std::cout << "Writing "<< log_filename <<": "<< msg << std::endl;
+  //std::cout << "FILE OPEN"<< std::endl;
+  f = fopen(log_filename, "a");
+  //std::cout << "FILE WRITE"<< std::endl;
+  char * cur_pos = (char*)calloc(100,sizeof(char));
+  sprintf(cur_pos,"Current position: (%d , %d)",bt.current_pos.x,bt.current_pos.y);
+  char * targ_dir = (char*)calloc(100,sizeof(char));
+  sprintf(targ_dir,"Target direction: %d",bt.target_direction);
+  fprintf(f, "[%s]\n%s\n%s\n%s\n\n",buffer, str.c_str(),cur_pos,targ_dir);
+  //std::cout << "FILE CLOSE"<< std::endl;
+  fclose(f);
+  //std::cout << "-----END-----" << std::endl;
+}
 void show_map( struct bot bt, struct player pls[MAX_P300]){
+  if(LOG == 1){
+    write_log(bt);
+  }
   cv::Mat map(cv::Size(MAP_COLS, MAP_ROWS), CV_8UC3, cv::Scalar(255,255,255));
   cv::String window_name = "Map";
   cv::Mat img = map.clone();
@@ -647,12 +685,19 @@ void p300_send_one(player pls[MAX_P300], bot *bt){           // send the p300 co
   int k = 2;
   double ratio = 1+exp(k*pls[max2].p/pls[max1].p);
   std::cout << "RATIO : " << ratio << std::endl;
+  distribution pst;
+
+  _init_distribution(&pst, (double)MAX_DIRECTION/2, STAY_STDDEV);
+  mul_distribution(pst.dir, P300_STAY_EFFECT);
+  shift_distribution(pst.dir, bt->current_direction);
+
   distribution k_dist;
   _init_distribution(&k_dist, (double)MAX_DIRECTION/2, P300_STDDEV*ratio); // possibility to add a coefficient whitch depends of the players distance 
-  mul_distribution(k_dist.dir, (1-P300_PAST_EFFECT));
+  mul_distribution(k_dist.dir, (1-P300_PAST_EFFECT-P300_STAY_EFFECT));
   int shift = calculate_degree(bt->current_pos, pls[max1].pos);
   shift_distribution(k_dist.dir, shift);
   sum_distribution(bt->dir.dir, k_dist.dir);
+  sum_distribution(bt->dir.dir, pst.dir);
 
   //std::cout << "[ " << i << " ] " << pls[i].pos<< " shift: " << shift << " g_p = " << g_p[i] << " p(i) = " << pls[i].p << std::endl;
 
@@ -684,6 +729,7 @@ void bot_move(struct bot *bt, struct player pls[MAX_P300]){
   mul_distribution(move.dir, MOVE_EFFECT);
   int shift = (bt->target_direction-(MAX_DIRECTION/2));
   shift_distribution(move.dir, shift);
+  mul_distribution(bt->dir.dir, 1-MOVE_EFFECT);
   sum_distribution(bt->dir.dir, move.dir);
   
   double tot = tot_distribution(bt->dir.dir);

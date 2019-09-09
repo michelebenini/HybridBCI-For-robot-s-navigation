@@ -30,6 +30,9 @@ class bot                                                // struct represent the
 void bot::showCallback(const hybrid_bci::direction_distribution::ConstPtr& msg){
     ROS_INFO("Callback show");
     img = cv::Mat(cv::Size(800, 800), CV_8UC3, cv::Scalar(255,255,255));
+    if(msg->best_dir == -2){
+      exit(0);
+    }
     for(int i = 0; i < 360; i++){
         dir.dir[i] = msg->directions[i];
     }

@@ -92,7 +92,7 @@ void write_log(char* msg){
 void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
 {
   //ROS_INFO("[ %d ] P300 command!", ((int)msg->pkg_id));
-  //ROS_INFO("START DIRECTION : %d",this->current_direction);
+  ROS_INFO("START DIRECTION : %d",this->current_direction);
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   int people = ((int)msg->tot_people);
   int max_direction = config.max_direction;
@@ -101,6 +101,7 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
     enable_moves = -1;
   }
   else if(people == -1 && enable_moves == -1){
+    std::cout << "START MOVING" << std::endl;
     enable_moves = 1;
   }
   else if( enable_moves == 1 ){
@@ -109,17 +110,19 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
       ROS_INFO("\t[ %d ] ( %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].dir,(double)msg->person[i].p);
       pls[i].id = (int)msg->person[i].id;
       pls[i].dir = msg->person[i].dir;
-      pls[i].dir = (pls[i].dir+current_direction)%max_direction;
+      pls[i].dir = pls[i].dir+current_direction;
       pls[i].p = (double)msg->person[i].p;
     }
     p300_send_one(pls,people);
   }
+  
   ROS_INFO("DIRECTION : %d\n",this->target_direction);
 }
 
 void bot::p300_send_one(player *pls,int n){           // send the p300 command
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
-  
+  double p300_stay_effect = config.p300_stay_effect;
+  double stay_stddev = config.stay_stddev;
   int max_direction = config.max_direction;
   //ROS_INFO("max_direction %d",max_direction);
   double p300_past_effect = config.p300_past_effect;
@@ -152,16 +155,23 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
   double ratio = 1 + exp(2*pls[max2].p/pls[max1].p);
   //ROS_INFO("ratio %lf",ratio);
   
+  distribution pst;
+  pst.dir = (double*)calloc(max_direction,sizeof(double));
+  _init_distribution(&pst, (double)max_direction/2, stay_stddev, max_direction);
+  mul_distribution(pst.dir, p300_stay_effect, max_direction);
+  shift_distribution(pst.dir, current_direction, max_direction);
+
   distribution k_dist;
   k_dist.dir = (double*)calloc(max_direction,sizeof(double));
   _init_distribution(&k_dist, (double)max_direction/2, p300_stddev*ratio, max_direction); // possibility to add a coefficient whitch depends of the players distance 
   //ROS_INFO("New distribution %lf ",tot_distribution(k_dist.dir, max_direction));
   
-  mul_distribution(k_dist.dir, (1-p300_past_effect), max_direction);
+  mul_distribution(k_dist.dir, (1-p300_past_effect-p300_stay_effect), max_direction);
   //ROS_INFO("Scaled new distribution %lf ",tot_distribution(k_dist.dir, max_direction));
   
   shift_distribution(k_dist.dir, pls[max1].dir, max_direction);
   sum_distribution(dir.dir, k_dist.dir, max_direction);
+  sum_distribution(dir.dir, pst.dir, max_direction);
 
   double tot = tot_distribution(dir.dir, max_direction);
   mul_distribution(dir.dir, 1/tot, max_direction);
@@ -176,8 +186,8 @@ void bot::motorimageryCallback(const hybrid_bci::motorimagery::ConstPtr& msg)
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   int max_direction = config.max_direction;
   if(((int)msg->pkg_id) < 0){
-    free(this->dir.dir);
-    exit(0);
+    std::cout << "EXIT" << std::endl;
+    enable_moves =-2;
   }
   if(msg->dir){
     //ROS_INFO("[ %d ] Turn right!", ((int)msg->pkg_id));
@@ -278,7 +288,7 @@ void bot::odomCallback(const nav_msgs::Odometry::ConstPtr &msg){
   double rad = tf::getYaw(msg->pose.pose.orientation);
   double deg = angles::to_degrees(rad);
   if(deg < 0) deg = deg + 360;
-  std::cout << deg << std::endl;
+  std::cout << "Current direction : " << deg << std::endl;
   current_direction = (int)deg;
 
   if(target_direction == -1){
@@ -297,6 +307,7 @@ int main(int argc, char **argv){
   auto start_t = std::chrono::system_clock::now();
   std::time_t start_time = std::chrono::system_clock::to_time_t(start_t);
   log_filename = (char*)calloc(100, sizeof(char));
+  
   sprintf(log_filename,"%s/Logs/%ld.log", ros::package::getPath("hybrid_bci").c_str(),start_time);
   char* log_msg = (char*)calloc(1000, sizeof(char));
   sprintf(log_msg, "Start!");
@@ -315,24 +326,26 @@ int main(int argc, char **argv){
   ros::Subscriber od_sub = n.subscribe("odom",1, &bot::odomCallback, &bt);
   ros::Rate loop_rate(1);
   
-  int count = 0;
 
   int target_dir = bt.target_direction;
   while(ros::ok){
+    
     hybrid_bci::direction_distribution msg;
     if(target_dir != bt.target_direction || bt.target_direction == -1){
-      count = 1;
+      
       target_dir = bt.target_direction;
     }
-    if(count % 5 == 0){
-      confirm_move(&bt);
-    }
+    
+    confirm_move(&bt);
+    
     
     msg =  bot_move(&bt);
     pub.publish(msg);
     ros::spinOnce();
     loop_rate.sleep();
-    count++;
+    if( msg.best_dir == -2){
+      exit(0);
+    }
   }
   
 
@@ -459,6 +472,9 @@ cv::Point2d calculate_point(cv::Point2d bt, int dg, double dist){               
 }
 
 void confirm_move(bot *bt){
+  if(bt->enable_moves == -1){
+    return;
+  }
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   char* log_msg = (char*)calloc(500, sizeof(char));
   sprintf(log_msg, "No-Commands\n\tDirection confirmed");
@@ -510,6 +526,9 @@ hybrid_bci::direction_distribution bot_move( bot *bt){
 
   if(bt->enable_moves == 1){
     msg.best_dir = bt->target_direction;
+  }
+  else if(bt->enable_moves == -2){
+    msg.best_dir = -2;
   }
   else{
     msg.best_dir = -1;

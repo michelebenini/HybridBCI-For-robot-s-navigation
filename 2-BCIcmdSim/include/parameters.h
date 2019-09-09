@@ -4,6 +4,9 @@
 #include "math.h"
 #include "thread"
 #include <Eigen/Dense>
+#include <fstream>
+#include <thread>         // std::thread
+#include <mutex>          // std::mutex
 
 // drawing parameters
 #define MAX_DIMENSION 1000
@@ -23,8 +26,9 @@
 
 
 #define NEW_STAY_EFFECT 0.3                                 // effect of stability on the distribution
-#define MOVE_EFFECT 0.03
+#define MOVE_EFFECT 0.02
 #define P300_PAST_EFFECT 0.3                              // effect of past commands on the distribution
+#define P300_STAY_EFFECT 0.03  
 #define MI_PAST_EFFECT 0.2
 #define MI_DEGREE 45
 
@@ -57,6 +61,8 @@
 #define MP_SWITCH 'c'
 #define MV_SWITCH 'p'
 #define P300_G 'o'
+
+#define LOG 1
 
 struct distribution                                       // struct represent normal distribution
 {
