@@ -110,7 +110,7 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
       ROS_INFO("\t[ %d ] ( %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].dir,(double)msg->person[i].p);
       pls[i].id = (int)msg->person[i].id;
       pls[i].dir = msg->person[i].dir;
-      pls[i].dir = pls[i].dir+current_direction;
+      pls[i].dir = pls[i].dir+(int)current_direction/2;
       pls[i].p = (double)msg->person[i].p;
     }
     p300_send_one(pls,people);

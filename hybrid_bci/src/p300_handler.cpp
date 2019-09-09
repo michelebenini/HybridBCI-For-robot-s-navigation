@@ -91,6 +91,7 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         if(pls[i].signal == 1){
           cv::Mat roi = current(rect);
           roi.setTo(cv::Scalar(0, 0, 255));
+          pls[i].signal = -1;
         }
       }
       
