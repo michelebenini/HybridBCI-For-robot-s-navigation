@@ -100,6 +100,7 @@ add_executable(move src/move_bci.cpp)
 add_executable(view_dist src/view_dist.cpp)
 add_executable(p300_handler src/p300_handler.cpp)
 add_executable(mi_handler src/mi_handler.cpp)
+add_executable(send_p300 src/send_p300.cpp)
 
 target_link_libraries(cmd_simu 
   ${OpenCV_LIBS} 
@@ -132,10 +133,18 @@ target_link_libraries(mi_handler
   ${TOBIID_LIBRARIES}
   ${TOBIIC_LIBRARIES}
 )
-
+target_link_libraries(send_p300 
+  ${catkin_LIBRARIES} 
+  ${OpenCV_LIBS} 
+  ${CNBILOOP_LIBRARIES} 
+  ${TOBICORE_LIBRARIES}
+  ${TOBIID_LIBRARIES}
+  ${TOBIIC_LIBRARIES}
+)
 add_dependencies(cmd_simu hybrid_bci_generate_messages_cpp)
 add_dependencies(hybrid_bci hybrid_bci_generate_messages_cpp)
 add_dependencies(move hybrid_bci_generate_messages_cpp)
 add_dependencies(view_dist hybrid_bci_generate_messages_cpp)
 add_dependencies(p300_handler hybrid_bci_generate_messages_cpp)
 add_dependencies(mi_handler hybrid_bci_generate_messages_cpp)
+add_dependencies(send_p300 hybrid_bci_generate_messages_cpp)

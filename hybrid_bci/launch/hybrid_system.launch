@@ -34,7 +34,7 @@
         </rosparam>
     </node>
   
- <arg name="world_file"  default="$(find hybrid_bci)/worlds/full_test_world.world"/> 
+ <arg name="world_file"  default="$(find hybrid_bci)/worlds/test_mi_world.world"/> 
   
 
   <arg name="base"      value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->
@@ -71,7 +71,7 @@
     <remap from="scan" to="/scan"/>
   </node>
 
-    <node pkg="hybrid_bci" type="hybrid_bci" name="hbci" output="screen" >
+    <node pkg="hybrid_bci" type="hybrid_bci" name="hbci" >
     </node>
     <node pkg="hybrid_bci" type="move" name="robotmove" >
     </node>

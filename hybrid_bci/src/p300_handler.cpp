@@ -43,6 +43,7 @@ class view{
     ros::Publisher pub2cnb;
     ros::Publisher pubcmd;
     int face_detection;
+    int randomnes;
         
     view(ros::ServiceClient c);
     void imageCallback(const sensor_msgs::ImageConstPtr& msg);
@@ -88,10 +89,11 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         else{
           cv::rectangle(current, rect, cv::Scalar(0, 0, 0),2);
         }
+
         if(pls[i].signal == 1){
           cv::Mat roi = current(rect);
           roi.setTo(cv::Scalar(0, 0, 255));
-          pls[i].signal = -1;
+          
         }
       }
       
@@ -116,18 +118,27 @@ void view::cnbiCallback(const cnbiros_tobi_msgs::TidMessage::ConstPtr& msg){
 
   if(event >= config.p300_task && event < config.p300_task+4){
     int prs = event - config.p300_task;
+    if(pls[prs].inside==0){
+      std::cout << "PERSON IS NOT IN THE VISUAL!!" << std::endl;
+      return;
+    }
     int pos_deg = 0;
    
     std::cout << "Person selected : " << prs << " - " << filename[prs] << std::endl;
     std::cout << "Corner : (x " << pls[prs].corner.x << ", y "<< pls[prs].corner.y <<" )" << std::endl;
     std::cout << "Width : " << pls[prs].width << " Height :  "<<pls[prs].height << std::endl;
-    pls[prs].signal = 1;
+    std::cout << "Is in the image : " << pls[prs].inside << std::endl;
     
-      pos_deg = pls[prs].corner.x + (pls[prs].width/2);
+    for(int i = 0; i < filename.size(); i++){
+      pls[i].signal = 0;
+    }
+    pls[prs].signal = 1;
+    count = 1;
+    pos_deg = pls[prs].corner.x + (pls[prs].width/2);
       
     double ratio = 0;  
     
-      ratio = (double)pos_deg/img.cols;
+    ratio = (double)pos_deg/img.cols;
       
     
     pos_deg = (ratio*config.kinet_fov)-(config.kinet_fov/2);
@@ -135,20 +146,55 @@ void view::cnbiCallback(const cnbiros_tobi_msgs::TidMessage::ConstPtr& msg){
     hybrid_bci::P300 msg_p;
     msg_p.pkg_id = count;
     msg_p.tot_people = config.max_p300;
-    for(int i = 0; i < msg_p.tot_people ;i++){
-      hybrid_bci::P300_person p1;
-      p1.id = i;
-             
-      if(i == prs){
-        p1.dir = pos_deg;
-        p1.p = config.fixed_p300;
+    if(randomnes == 0){
+      for(int i = 0; i < msg_p.tot_people ;i++){
+        hybrid_bci::P300_person p1;
+        p1.id = i;
+      
+        if(i == prs){
+          p1.dir = pos_deg;
+          p1.p = config.fixed_p300;
+        }
+        else{
+          p1.dir = 0;
+          p1.p = (1-config.fixed_p300)/(config.max_p300-1);
+        }
+        msg_p.person.push_back(p1);
       }
-      else{
-        p1.dir = 0;
-        p1.p = (1-config.fixed_p300)/(config.max_p300-1);
-      }
-      msg_p.person.push_back(p1);
     }
+    else{
+      double r[4];
+      r[1] = (double)rand();
+      r[2] = (double)rand();
+      r[3] = (double)rand();
+      r[0] = (double)rand();
+      double sum = r[1]+r[2]+r[3]+r[0];
+
+      r[0] = 0.4 + (r[0]/sum)*0.6;
+      r[1] = 0.6*(r[1]/sum);
+      r[2] = 0.6*(r[2]/sum);
+      r[3] = 0.6*(r[3]/sum);
+      
+      int a = 1;
+      for(int i = 0; i < msg_p.tot_people ;i++){
+        hybrid_bci::P300_person p1;
+        p1.id = i;
+      
+        if(i == prs){
+          p1.dir = pos_deg;
+          p1.p = r[0];
+        }
+        else{
+          p1.dir = 0;
+          p1.p = r[a];
+          a++;
+        }
+        msg_p.person.push_back(p1);
+      }
+
+    }
+     
+    
     pubcmd.publish(msg_p);
   }
 }
@@ -201,9 +247,10 @@ void view::run_face_detector(ros::ServiceClient c, int counter){
   else{
     face_detection ++;
   }
-  if(active != -1)
+  for(int i = 0; i < filename.size(); i++)
   {
-    pls[active].active = -1;
+    pls[i].active = -1;
+    active = -1;
   }
   face_classification::ClassifyAll req;
   
@@ -239,7 +286,7 @@ void view::run_face_detector(ros::ServiceClient c, int counter){
       pls[i].id = i;
       pls[i].active = -1;
       pls[i].inside = 0;
-      pls[i].signal = -1;
+      //pls[i].signal = -1;
       done[i] = 0;
     }
     n_person = 0;
@@ -251,7 +298,7 @@ void view::run_face_detector(ros::ServiceClient c, int counter){
           pls[n_person].corner = cv::Point(req.response.results[i].face_region.center.x - req.response.results[i].face_region.size_x / 2, req.response.results[i].face_region.center.y - req.response.results[i].face_region.size_y / 2);
           pls[n_person].height = req.response.results[i].face_region.size_y;
           pls[n_person].width = req.response.results[i].face_region.size_x;
-          pls[n_person].active = 1;
+          pls[n_person].active = -1;
           pls[n_person].inside = 1;
           done[j] = 1;
           n_person++;
@@ -346,8 +393,13 @@ int main(int argc, char **argv){
 
     ros::ServiceClient c = n.serviceClient<face_classification::RegisterFace>("/register_face",true);
     ros::ServiceClient srv_ca = n.serviceClient<face_classification::ClassifyAll>("/classify_all", true);
-
+    hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
     view v = view(c);
+    
+    ////////////////////////////////////// P300 randomnes /////////////////////////////
+    v.randomnes = config.randomnes;
+    ////////////////////////////////////// P300 randomnes /////////////////////////////
+
     v.pub2cnb = n.advertise<cnbiros_tobi_msgs::TidMessage>("rostid_ros2cnbi", 10000);
     v.pubcmd = n.advertise<hybrid_bci::P300>("p300", 10000);
     
@@ -362,6 +414,7 @@ int main(int argc, char **argv){
     ros::Rate loop_rate(1);
     
     for(int counter = 0; ros::ok; counter++){
+      std::cout << "RANDOMNES VALUE : " << v.randomnes << std::endl;
       if(!v.img.empty()){
         
         ROS_INFO("RUN face detector");
@@ -369,6 +422,11 @@ int main(int argc, char **argv){
         ROS_INFO("END face detector");
       
         v.activation();
+        if(v.count%3==0){
+          for(int i = 0; i < v.filename.size(); i++){
+            v.pls[i].signal = -1;
+          }
+        }
       }
      
       ros::spinOnce();
