@@ -34,7 +34,7 @@
         </rosparam>
     </node>
   
- <arg name="world_file"  default="$(find hybrid_bci)/worlds/test_mi_world.world"/> 
+ <arg name="world_file"  default="$(find hybrid_bci)/worlds/full_test_world.world"/> 
   
 
   <arg name="base"      value="$(optenv TURTLEBOT_BASE kobuki)"/> <!-- create, roomba -->

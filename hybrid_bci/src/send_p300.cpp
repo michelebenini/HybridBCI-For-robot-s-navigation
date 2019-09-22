@@ -41,11 +41,11 @@ int main(int argc, char **argv)
     name = (char*)calloc(1000, sizeof(char));
     sprintf(name,"Target selected");
     int count = 0;
-    int c = getch();
+    int c;
     
     while (ros::ok())
     {
-        
+        c = getch();
         int index = -1;
         
         std::cout << std::endl;
@@ -65,13 +65,7 @@ int main(int argc, char **argv)
         else if(c == '4'){
             index = 3;
         }
-        else{
-            if(!img.empty()){
-                c = cv::waitKey(0);
-            }else{
-                c = getch();
-            }
-        }
+        
               
 
         if(index == -1){
@@ -91,15 +85,6 @@ int main(int argc, char **argv)
             count++;
 
             pub.publish(msg);
-
-            char* str;
-            str = (char*)calloc(1000, sizeof(char));
-            sprintf(str,"/home/michele/catkin_ws/src/hybrid_bci/data/%s",filename[index].c_str());
-            img = cv::imread(str);
-            cv::namedWindow(name, cv::WINDOW_NORMAL);
-            cv::resizeWindow(name, cv::Size(ROWS,COLS));
-            cv::imshow(name,img);
-            c = cv::waitKey(0);
         }
         ros::spinOnce();
         loop_rate.sleep();

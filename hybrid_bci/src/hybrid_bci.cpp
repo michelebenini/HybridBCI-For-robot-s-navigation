@@ -40,7 +40,10 @@ struct player                                             // struct represent pl
   int dir;
   double p;
 };
-
+int cmd;
+int mi_cmd;
+int p300_cmd;
+int no_cmd;
 class bot                                                // struct represent the bot data
 {
   public:
@@ -110,7 +113,11 @@ void bot::p300Callback(const hybrid_bci::P300::ConstPtr& msg)
       ROS_INFO("\t[ %d ] ( %d ) %lf",(int)msg->person[i].id, (int)msg->person[i].dir,(double)msg->person[i].p);
       pls[i].id = (int)msg->person[i].id;
       pls[i].dir = msg->person[i].dir;
-      pls[i].dir = pls[i].dir+(int)current_direction/2;
+      // BUG //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      pls[i].dir = current_direction - max_direction/2 - pls[i].dir;
+      //pls[i].dir = (int)max_direction/2 + (int)current_direction-pls[i].dir;
+      std::cout << "CHECK " << current_direction << std::endl;
+      // BUG //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       pls[i].p = (double)msg->person[i].p;
     }
     p300_send_one(pls,people);
@@ -145,7 +152,9 @@ void bot::p300_send_one(player *pls,int n){           // send the p300 command
     
   }
   char* log_msg = (char*)calloc(2000, sizeof(char));
-  sprintf(log_msg,"P300 command:\n\tMax probability: %f\n\tSecond probability: %f\n\tDirection offset: %d\n\tCurrent direction: %d",pls[max1].p, pls[max2].p, pls[max1].dir, current_direction);
+  cmd++;
+  p300_cmd++;
+  sprintf(log_msg,"Command: %d\nP300 command: %d\n\tMax probability: %f\n\tSecond probability: %f\n\tDirection offset: %d\n\tCurrent direction: %d",cmd,p300_cmd,pls[max1].p, pls[max2].p, pls[max1].dir, current_direction);
   std::thread log_th (write_log, log_msg);
   //ROS_INFO("MAX1 %lf MAX2 %lf ", pls[max1].p, pls[max2].p);
   
@@ -207,7 +216,9 @@ void bot::motorimageryCallback(const hybrid_bci::motorimagery::ConstPtr& msg)
 void bot::motor_imagery_right(){                                          // send motor imagery right command
   //std::cout << "Right command!" << std::endl;
   char* log_msg = (char*)calloc(1000, sizeof(char));
-  sprintf(log_msg, "Motor Imagery Right command\n\tShift: +45\n\tCurrent direction: %d",current_direction);
+  cmd++;
+  mi_cmd++;
+  sprintf(log_msg, "Command: %d\nMotor Imagery Right command: %d\n\tShift: +45\n\tCurrent direction: %d",cmd,mi_cmd,current_direction);
   std::thread log_th (write_log, log_msg);
 
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
@@ -245,7 +256,9 @@ void bot::motor_imagery_right(){                                          // sen
 
 void bot::motor_imagery_left(){                                          // send motor imagery left command
   char* log_msg = (char*)calloc(1000, sizeof(char));
-  sprintf(log_msg ,"Motor Imagery Left command\n\tShift: -45\n\tCurrent direction: %d",current_direction);
+  cmd++;
+  mi_cmd++;
+  sprintf(log_msg ,"Command: %d\nMotor Imagery Left command: %d\n\tShift: -45\n\tCurrent direction: %d",cmd,mi_cmd,current_direction);
   std::thread log_th (write_log, log_msg);
   
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
@@ -311,6 +324,10 @@ int main(int argc, char **argv){
   sprintf(log_filename,"%s/Logs/%ld.log", ros::package::getPath("hybrid_bci").c_str(),start_time);
   char* log_msg = (char*)calloc(1000, sizeof(char));
   sprintf(log_msg, "Start!");
+  cmd=0;
+  mi_cmd=0;
+  p300_cmd=0;
+  no_cmd = 0;
   std::thread log_th (write_log, log_msg);
   //std::cout<< log_filename << std::endl;
 
@@ -477,7 +494,9 @@ void confirm_move(bot *bt){
   }
   hybrid_bci::ParametersConfig config = hybrid_bci::ParametersConfig::__getDefault__();
   char* log_msg = (char*)calloc(500, sizeof(char));
-  sprintf(log_msg, "No-Commands\n\tDirection confirmed");
+  cmd++;
+  no_cmd++;
+  sprintf(log_msg, "Command: %d\nNo-Commands: %d\n\tDirection confirmed: %d",cmd,no_cmd,bt->current_direction);
   std::thread log_th (write_log, log_msg);
 
   int max_direction = config.max_direction;

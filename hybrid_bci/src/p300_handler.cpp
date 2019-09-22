@@ -79,7 +79,8 @@ void view::imageCallback(const sensor_msgs::ImageConstPtr& msg)
         if(pls[i].id == -1)continue;
         //ROS_INFO("[ %d ] Person %s!", i, filename[pls[i].id].c_str());
         cv::Rect rect = cv::Rect(pls[i].corner.x,pls[i].corner.y,pls[i].width,pls[i].height);
-        
+        cv::Point p = cv::Point(pls[i].corner.x-20, pls[i].corner.y-50);
+        cv::putText(current,filename[pls[i].id].c_str(), p,cv::FONT_HERSHEY_SIMPLEX,1,cv::Scalar(0,0,0),3);
         if(pls[i].active == 1){
           cv::Mat roi = current(rect);
           roi.setTo(cv::Scalar(0, 255, 0));

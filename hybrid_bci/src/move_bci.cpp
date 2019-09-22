@@ -93,7 +93,7 @@ geometry_msgs::Twist bot_move(bot *bt){
     if(dif > 359) dif = dif - 360;
     if(dif < range){
       ROS_INFO("Robot Moves straight");
-      msg.linear.x = 0.2;
+      msg.linear.x = 0.1;
       msg.linear.y = 0;
       msg.linear.z = 0;
       msg.angular.x = 0;
