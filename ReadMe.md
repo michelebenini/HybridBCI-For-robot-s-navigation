@@ -1,9 +1,20 @@
-To use you must have in your ros enviroment:
+Hybrid Brain-Computer Interface for Robot's navigation
+
+This folder contains file and data to run a system based on BCI to pilot a robots.
+In the Documentaton folder you can find the full description of the system and some slides.
+In the BCI Simulator folder you can find a simulator to learn how the system evolves.
+In the hybrid bci folder you can find the ROS system
+In the cnbi_wtkapp_bin_hybrid folder you can find the processing for the cnbi loop
+In the CNBI protocols you can find the protocols for the cnbi loop
+
+
+To use you must have in your ROS enviroment:
 - cnbiros_bci
 - cnbiros_tobi_msgs
 - face_classification
 - open_face_recognition
 - tf-pose-estimation
+- OpenCV
 
 To use you must have in your wtkapp/bin/.. enviroment cnbi_wtkapp_bin_hybrid:
 - hybrid_p300_processing.cpp
@@ -27,28 +38,11 @@ catkin_make
 cd ~/workspace/whitoolkit/data/test
 cl_runloop -d test.gdf -r
 
-roslaunch hybrid_bci roshybrid.launch
+roslaunch hybrid_bci face_detector.launch
+roslaunch hybrid_bci hybrid_system.launch
 
-hybrid_p300_protocol -x hybrid_p300_protocol.xml
-hybrid_smr_protocol -x hybrid_smr_protocol.xml
+PRESS p on hybrid_system to start moving the robot
 
-////////////// For test with simulator///////////////
-roslaunch hybrid_bci simulation_world.launch
-//////////////////////////////////////////////////////
 
-rosrun open_face_recognition open_face_recognition_node.py
-rosrun face_classification face_classification_node.py
-rosrun hybrid_bci p300_handler
-rosrun hybrid_bci mi_handler
-rosrun hybrid_bci move
-rosrun hybrid_bci cmd_simu
-rosrun hybrid_bci hybrid_bci
-
-PRESS p on cmd_simu to start moving the robot
-
-TO SEE THE CURRENT DIRECTION DISTRIBUTION DIGIT:
-rosrun hybrid_bci view_dist
-
-The start script make start all the programs, exept for the handlers.
 
 
